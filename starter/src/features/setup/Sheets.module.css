@@ -1,0 +1,35 @@
+.fileRow {
+  display: flex; align-items: center; gap: 12px; padding: 10px 14px;
+  background: var(--bg); border: 1px solid var(--glass-border); border-radius: 14px;
+}
+.fileRow svg { color: var(--text-2); flex: none; }
+.fileName { overflow: hidden; font-size: 14px; white-space: nowrap; text-overflow: ellipsis; }
+.fileSize { color: var(--muted); font-size: 12px; }
+.verdict { display: flex; align-items: center; gap: 6px; margin: 14px 0 6px; font-size: 14px; font-weight: 600; }
+.ok { color: var(--positive); }
+.bad { color: var(--danger); }
+.stat { display: flex; justify-content: space-between; padding: 4px 0; font-size: 14px; }
+.stat span:first-child { color: var(--text-2); }
+.stat span:last-child { font-family: var(--font-num); font-variant-numeric: tabular-nums; }
+.warn {
+  margin-top: 12px; padding: 10px 12px; color: var(--text-2); font-size: 13px; line-height: 18px;
+  background: var(--danger-bg); border: 1px solid var(--danger-border); border-radius: 14px;
+}
+.warn b { color: var(--danger); font-weight: 600; }
+.warnLine { display: flex; gap: 8px; align-items: flex-start; }
+.warnLine + .warnLine { margin-top: 8px; }
+.warnLine svg { flex: none; margin-top: 2px; }
+.errors {
+  margin: 0; padding: 10px 14px; list-style: none;
+  font-size: 13px; line-height: 18px; background: var(--danger-bg); border: 1px solid var(--danger-border); border-radius: 14px;
+}
+.errors li + li { margin-top: 8px; }
+.unchanged { margin: 10px 0 0; color: var(--muted); font-size: 13px; }
+.buttons { display: grid; gap: 6px; }
+.danger {
+  height: 56px; color: #2a0f12; font-size: 16px; font-weight: 600; background: var(--danger); border: 0; border-radius: 28px;
+}
+.danger:disabled { opacity: 0.6; }
+.primary { height: 56px; color: var(--on-accent); font-size: 16px; font-weight: 600; background: var(--accent); border: 0; border-radius: 28px; }
+.primary:disabled { color: var(--faint); background: var(--disabled-bg); }
+.cancel { height: 48px; color: var(--text); font-size: 15px; font-weight: 600; background: transparent; border: 0; border-radius: 24px; }

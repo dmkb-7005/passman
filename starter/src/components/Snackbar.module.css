@@ -1,0 +1,28 @@
+.snackbar {
+  position: fixed;
+  left: 12px;
+  right: var(--snackbar-right, 12px);
+  bottom: calc(var(--snackbar-bottom, 96px) + env(safe-area-inset-bottom, 0px));
+  z-index: 40;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  min-height: 48px;
+  padding: 6px 8px 6px 16px;
+  color: var(--text);
+  font-size: 14px;
+  background: #2e3647;
+  border: 1px solid var(--glass-border);
+  border-radius: 14px;
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.45);
+}
+.action {
+  height: 40px;
+  padding: 0 14px;
+  color: var(--accent);
+  font-weight: 600;
+  background: none;
+  border: 0;
+  border-radius: 20px;
+}

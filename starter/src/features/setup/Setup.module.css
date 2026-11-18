@@ -1,0 +1,44 @@
+.screen { position: relative; flex: 1; min-height: 0; display: flex; flex-direction: column; }
+.header { display: flex; align-items: center; gap: 4px; height: 56px; padding: 24px 16px 0; flex: none; }
+.title { flex: 1; margin: 0; font-size: 22px; font-weight: 600; }
+.scroll { flex: 1; min-height: 0; overflow-y: auto; padding: 12px 0 24px; overscroll-behavior: contain; }
+.label { margin: 0 20px 6px; color: var(--muted); font-size: 12px; font-weight: 600; letter-spacing: 0.6px; }
+.card {
+  margin: 0 16px 12px; padding: 16px;
+  background: var(--glass); border: 1px solid var(--glass-border); border-radius: 20px;
+  backdrop-filter: blur(18px); -webkit-backdrop-filter: blur(18px);
+}
+.cardWarn { border-color: rgba(242, 179, 75, 0.4); }
+.cardDanger { border-color: var(--danger-border); }
+
+.status { display: flex; gap: 12px; align-items: center; }
+.statusIcon { width: 44px; height: 44px; flex: none; display: flex; align-items: center; justify-content: center; border-radius: 22px; }
+.iconOk { color: var(--accent); background: var(--info-bg); }
+.iconWarn { color: var(--warn); background: var(--warn-bg); }
+.iconDanger { color: var(--danger); background: var(--danger-badge-bg); }
+.statusTitle { font-size: 16px; font-weight: 600; }
+.statusWarn { color: var(--warn); }
+.statusDanger { color: var(--danger); }
+.statusSub { margin-top: 2px; color: var(--text-2); font-size: 13px; }
+
+.primary {
+  width: 100%; height: 56px; margin-top: 14px; display: flex; align-items: center; justify-content: center; gap: 8px;
+  color: var(--on-accent); font-size: 16px; font-weight: 600; background: var(--accent); border: 0; border-radius: 28px;
+}
+.secondary {
+  width: 100%; height: 44px; margin-top: 6px; padding: 0 12px; display: flex; align-items: center; justify-content: center; gap: 8px;
+  color: var(--text); font-size: 14px; font-weight: 600; background: var(--surface-2); border: 0; border-radius: 22px;
+}
+.hint { margin-top: 10px; color: var(--muted); font-size: 12px; line-height: 16px; }
+
+.statRow { display: flex; justify-content: space-between; padding: 6px 0; font-size: 14px; }
+.statRow span:first-child { color: var(--text-2); }
+.statRow span:last-child { font-family: var(--font-num); font-variant-numeric: tabular-nums; }
+.note {
+  display: flex; gap: 8px; align-items: flex-start; margin-top: 10px; padding: 10px 12px;
+  color: var(--text-2); font-size: 13px; line-height: 18px; background: var(--info-bg); border-radius: 14px;
+}
+.note svg { flex: none; margin-top: 1px; color: var(--accent); }
+.noteWarn { color: var(--text); background: var(--warn-bg); border: 1px solid rgba(242, 179, 75, 0.33); }
+.noteWarn svg { color: var(--warn); }
+.version { margin-top: 12px; color: var(--muted); font-size: 12px; text-align: center; }

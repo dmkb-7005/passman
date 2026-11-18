@@ -1,0 +1,17 @@
+.screen { position: relative; flex: 1; min-height: 0; display: flex; flex-direction: column; overflow-y: auto; }
+.header { display: flex; align-items: center; justify-content: space-between; gap: 8px; height: 56px; padding: 24px 16px 0; flex: none; }
+.title { margin: 0; font-size: 22px; font-weight: 600; }
+.backup {
+  display: flex; align-items: center; gap: 6px; padding: 4px 0;
+  color: var(--muted); font-size: 12px; text-decoration: none; white-space: nowrap;
+}
+.backupWarn, .backupDanger { height: 28px; padding: 0 10px; border-radius: 14px; font-weight: 600; }
+.backupWarn { color: var(--warn); background: var(--warn-bg); border: 1px solid rgba(242, 179, 75, 0.35); }
+.backupDanger { color: var(--danger); background: var(--danger-badge-bg); border: 1px solid var(--danger-border); }
+.card {
+  margin: 20px 16px 0; padding: 16px; flex: none;
+  background: var(--glass); border: 1px solid var(--glass-border); border-radius: 20px;
+  backdrop-filter: blur(18px); -webkit-backdrop-filter: blur(18px);
+}
+.label { color: var(--muted); font-size: 13px; }
+.text { margin: 8px 0 0; color: var(--text-2); font-size: 14px; line-height: 20px; }
