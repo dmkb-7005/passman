@@ -1,0 +1,49 @@
+/* Tab screens (Logins, Generator, Settings): header + scrolling body over the night-ridges background. */
+.screen { position: relative; flex: 1; min-height: 0; display: flex; flex-direction: column; }
+.header { height: 56px; flex: none; display: flex; align-items: center; gap: 4px; padding: 0 4px 0 16px; }
+.title { margin: 0; flex: 1; font-size: 22px; line-height: 28px; font-weight: 600; }
+.iconButton {
+  width: 48px;
+  height: 48px;
+  flex: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  color: var(--text);
+  background: transparent;
+  border: 0;
+  border-radius: 24px;
+}
+.scroll { flex: 1; min-height: 0; overflow-y: auto; overscroll-behavior: contain; }
+.glass {
+  background: var(--glass);
+  border: 1px solid var(--glass-border);
+  border-radius: 20px;
+  backdrop-filter: blur(18px);
+  -webkit-backdrop-filter: blur(18px);
+}
+
+/* floating Add button: above the navigation, lifted above a snackbar */
+.fab {
+  position: absolute;
+  z-index: 3;
+  right: 16px;
+  bottom: calc(96px + env(safe-area-inset-bottom, 0px) + var(--snackbar-lift, 0px));
+  height: 56px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 0 22px 0 16px;
+  color: var(--on-accent);
+  font-size: 16px;
+  font-weight: 600;
+  background: var(--accent);
+  border: 0;
+  border-radius: 28px;
+  box-shadow: 0 8px 24px rgba(61, 155, 255, 0.35);
+  transition: bottom 0.15s;
+}
+@media (min-width: 900px) {
+  .fab { position: fixed; right: 24px; bottom: calc(24px + var(--snackbar-lift, 0px)); }
+}

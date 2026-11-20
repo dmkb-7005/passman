@@ -1,28 +1,41 @@
 .snackbar {
   position: fixed;
-  left: 12px;
-  right: var(--snackbar-right, 12px);
-  bottom: calc(var(--snackbar-bottom, 96px) + env(safe-area-inset-bottom, 0px));
-  z-index: 40;
+  z-index: 60;
+  left: max(16px, calc(50% - 264px));
+  right: max(16px, calc(50% - 264px));
+  bottom: calc(var(--snackbar-bottom, 24px) + env(safe-area-inset-bottom, 0px));
   display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 12px;
-  min-height: 48px;
-  padding: 6px 8px 6px 16px;
+  align-items: flex-start;
+  gap: 10px;
+  padding: 14px 16px;
   color: var(--text);
   font-size: 14px;
+  line-height: 20px;
   background: #2e3647;
-  border: 1px solid var(--glass-border);
   border-radius: 14px;
-  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.45);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
 }
+.withAction { align-items: center; min-height: 52px; padding: 0 4px 0 16px; }
+.message { flex: 1; }
+.success, .info { flex: none; display: flex; margin-top: 1px; }
+.success { color: var(--positive); }
+.info { color: var(--accent); }
 .action {
-  height: 40px;
-  padding: 0 14px;
+  flex: none;
+  height: 48px;
+  padding: 0 16px;
   color: var(--accent);
+  font-size: 15px;
   font-weight: 600;
   background: none;
   border: 0;
-  border-radius: 20px;
+  border-radius: 24px;
+}
+
+/* laptop: centred in the content column right of the 88 px rail */
+@media (min-width: 900px) {
+  :global(html[data-rail]) .snackbar {
+    left: calc(88px + max(16px, (100% - 88px - 528px) / 2));
+    right: max(16px, (100% - 88px - 528px) / 2);
+  }
 }

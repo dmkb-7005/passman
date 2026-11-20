@@ -1,0 +1,76 @@
+.screen {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  height: 100dvh;
+  max-width: 560px;
+  margin: 0 auto;
+  padding: env(safe-area-inset-top, 0px) 24px 0;
+}
+.content { position: relative; z-index: 1; flex: 1; display: flex; flex-direction: column; }
+.top { height: 132px; flex: none; }
+.hero { display: flex; flex-direction: column; align-items: center; gap: 20px; text-align: center; }
+.mark {
+  width: 96px;
+  height: 96px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--accent);
+  background: var(--info-bg);
+  border: 1px solid rgba(61, 155, 255, 0.35);
+  border-radius: 28px;
+}
+.name { margin: 0; font-size: 36px; line-height: 44px; font-weight: 600; letter-spacing: -0.5px; }
+.promise { margin: 0; max-width: 300px; font-size: 16px; line-height: 24px; color: var(--text-2); text-wrap: balance; }
+.grow { flex: 1; }
+.actions { display: flex; flex-direction: column; align-items: stretch; gap: 12px; padding-bottom: calc(28px + env(safe-area-inset-bottom, 0px)); }
+.secondaryGroup { display: flex; flex-direction: column; align-items: center; gap: 6px; }
+.secondaryGroup > button { font-size: 16px; }
+.subline { font-size: 13px; line-height: 18px; color: var(--muted); }
+
+/* ---------- create: step 2 ---------- */
+.securing { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 24px; padding-bottom: 96px; text-align: center; }
+.ring { position: relative; width: 112px; height: 112px; }
+.ringTrack, .ringSpin { position: absolute; inset: 0; border-radius: 56px; border: 3px solid #1f2d45; }
+.ringSpin { border-color: transparent; border-top-color: var(--accent); animation: spin 1.6s linear infinite; }
+.ringCore { position: absolute; inset: 14px; display: flex; align-items: center; justify-content: center; color: var(--accent); background: var(--info-bg); border-radius: 42px; }
+.securingTitle { font-size: 20px; line-height: 28px; font-weight: 600; }
+.securingText { max-width: 280px; margin-top: 8px; font-size: 14px; line-height: 20px; color: var(--muted); }
+@keyframes spin { to { transform: rotate(360deg); } }
+
+/* ---------- done ---------- */
+.done { display: flex; flex-direction: column; gap: 32px; padding-top: 48px; }
+.doneHero { display: flex; flex-direction: column; align-items: center; gap: 16px; text-align: center; }
+.doneIcon { width: 96px; height: 96px; display: flex; align-items: center; justify-content: center; color: var(--positive); background: var(--positive-bg); border-radius: 48px; }
+.doneTitle { margin: 0; font-size: 24px; line-height: 32px; font-weight: 600; }
+.doneText { margin: 0; max-width: 300px; font-size: 15px; line-height: 22px; color: var(--text-2); }
+.nextCard {
+  padding-top: 14px;
+  overflow: hidden;
+  background: var(--glass);
+  border: 1px solid var(--glass-border);
+  border-radius: 20px;
+  backdrop-filter: blur(18px);
+  -webkit-backdrop-filter: blur(18px);
+}
+.nextLabel { padding: 0 16px 4px; font-size: 13px; line-height: 18px; font-weight: 500; color: var(--muted); }
+.nextRow {
+  width: 100%;
+  min-height: 72px;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 12px 12px 12px 16px;
+  color: inherit;
+  text-align: left;
+  background: transparent;
+  border: 0;
+}
+.nextIcon { flex: none; width: 40px; height: 40px; display: flex; align-items: center; justify-content: center; color: var(--accent); background: var(--info-bg); border-radius: 20px; }
+.nextText { flex: 1; display: flex; flex-direction: column; gap: 2px; }
+.nextTitle { font-size: 15px; line-height: 22px; font-weight: 600; }
+.nextTitleAccent { color: var(--accent); }
+.nextSub { font-size: 13px; line-height: 18px; color: var(--muted); }
+.chevron { flex: none; display: flex; color: var(--muted); }
+.divider { height: 1px; margin-left: 70px; background: var(--glass-border); }

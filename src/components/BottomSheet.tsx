@@ -9,7 +9,7 @@ interface Props {
   children: ReactNode;
   /** replaces the close button, e.g. a "Clear" link; the backdrop still closes the sheet */
   headerAction?: ReactNode;
-  /** pinned under the scrolling body, e.g. "Show 214 expenses" */
+  /** pinned under the scrolling body, e.g. "Use this password" */
   footer?: ReactNode;
 }
 
@@ -26,9 +26,9 @@ export function BottomSheet({ title, onClose, children, headerAction, footer }: 
   return createPortal(
     <div className={styles.backdrop} onClick={onClose}>
       <div className={styles.sheet} role="dialog" aria-modal="true" aria-label={title} onClick={(e) => e.stopPropagation()}>
-        <div className={styles.handle} aria-hidden="true" />
+        <div className={styles.handleArea} aria-hidden="true"><span className={styles.handle} /></div>
         <div className={styles.head}>
-          <span className={styles.title}>{title}</span>
+          <h2 className={styles.title}>{title}</h2>
           {headerAction ?? (
             <button type="button" className={styles.close} aria-label="Close" onClick={onClose}>
               <CloseIcon />

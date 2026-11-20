@@ -61,3 +61,11 @@ export function useSettings(): Settings | undefined {
 export function useMeta<T>(key: string): T | null | undefined {
   return useLiveQuery(async () => ((await db.meta.get(key))?.value as T | undefined) ?? null, [key]);
 }
+
+/** Changes some settings on this device, keeping the others. */
+export async function updateSettings(patch: Partial<Settings>): Promise<void> {
+  await db.transaction('rw', db.meta, async () => {
+    const current = withDefaults((await db.meta.get('settings'))?.value);
+    await db.meta.put({ key: 'settings', value: { ...current, ...patch, generator: { ...current.generator, ...(patch.generator ?? {}) } } });
+  });
+}

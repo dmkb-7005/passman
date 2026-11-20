@@ -1,0 +1,32 @@
+.body { display: flex; flex-direction: column; gap: 12px; padding: 4px 16px 24px; }
+.hero { display: flex; flex-direction: column; gap: 14px; padding: 18px 16px 16px; }
+.heroText { display: flex; flex-direction: column; gap: 6px; }
+.password {
+  margin: 0;
+  font-family: var(--font-num);
+  font-weight: 600;
+  font-size: 24px;
+  line-height: 32px;
+  letter-spacing: 0.5px;
+  word-break: break-all;
+  font-variant-numeric: tabular-nums;
+}
+.none { margin: 0; font-family: var(--font-num); font-weight: 600; font-size: 24px; line-height: 32px; letter-spacing: 4px; color: var(--faint); }
+.noneHint { height: 20px; font-size: 14px; line-height: 20px; color: var(--muted); }
+.heroButtons { display: flex; gap: 10px; }
+.heroButton { flex: 1; height: 56px; font-size: 16px; border-radius: 28px; }
+.options { display: flex; flex-direction: column; gap: 4px; padding: 12px 16px 6px; }
+.saveLink {
+  align-self: center;
+  height: 48px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 0 12px;
+  color: var(--accent);
+  font-size: 15px;
+  font-weight: 600;
+  background: none;
+  border: 0;
+}
+.saveLink:disabled { color: var(--faint); }

@@ -67,24 +67,28 @@ src/
     importPlan.ts       duplicates review and applying the decisions
     generator.ts        password generator
     autolock.ts         lock decisions from timestamps
-  sync/
-    dropboxAuth.ts      PKCE sign-in, token refresh, revoke
-    dropboxClient.ts    get_metadata, download, upload(mode), list via fetch (no SDK)
-    syncEngine.ts       sync loop with an injected client (testable with a fake)
+  sync/               (sync milestone) dropboxAuth.ts, dropboxClient.ts, syncEngine.ts
   vault/
-    db.ts               Dexie: `vault`, `meta` tables, defaults
-    VaultProvider.tsx   unlocked state, actions (unlock, lock, add, edit, delete, import, restore)
-    useAutoLock.ts      idle + background timers
-    useSync.ts          triggers (unlock, debounce after change, Sync now), status
-  backup/             export/share (vault file as .json.txt), restore flow + tests
-  features/           welcome, unlock, recover, logins (list, detail, edit), generator, import, settings
-  components/         icons, BottomSheet, Snackbar, PasswordField, shared inputs
+    VaultProvider.tsx   unlocked state in memory: create, unlock, recover, lock, add/edit/delete (+ undo),
+                        change password, new recovery key; serialised writes; auto-lock (idle + background)
+  db/                 Dexie: `vault` (encrypted file) and `meta` (settings, device state)
+  app/                App.tsx (routes behind the vault gate), TabLayout (bottom bar / laptop rail),
+                      UpdateProvider + UpdateDialog, clipboard.ts (copy + 30 s clearing), format.ts (dates)
+  backup/             (backup milestone) export/share, restore
+  features/           welcome (welcome, create, done), unlock (unlock, recover), logins (list, detail, edit,
+                      generator sheet, sync chip), generator (tab + useGenerator), settings (+ password,
+                      recovery key), shared tab-screen styles
+  components/         icons, NightRidges, BottomSheet, Snackbar, form/ (fields, messages, dialogs,
+                      PasswordText), generator/ (controls, strength), recovery/ (key panel + print sheet)
   styles/             global.css
 ```
 
 There's no global state library: `VaultProvider` is a React context with a reducer. Dexie is used only for the two tables (no `useLiveQuery` for logins).
 
 ## 4. Main flows
+
+### 4.0 Screens and the vault gate
+`App.tsx` only routes to the screens of the current state: **empty** (Welcome, Create), **locked** (Unlock, Recover; any other address goes to Unlock and is opened after unlocking, e.g. the "Add login" shortcut) or **unlocked** (the tabs and forms). Reloading the page always starts locked.
 
 ### 4.1 Unlock
 1. Read the vault file from IndexedDB → derive KEK-P in the worker → unwrap DEK → decrypt payload → validate with Zod → logins in memory.

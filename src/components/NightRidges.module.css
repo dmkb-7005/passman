@@ -1,0 +1,9 @@
+.backdrop { position: fixed; inset: 0; z-index: 0; pointer-events: none; }
+.gradient { position: absolute; inset: 0; background: linear-gradient(180deg, #1f2d45 0%, #1c2436 38%, var(--bg) 60%); }
+.phone, .wide { position: absolute; inset: 0; width: 100%; height: 100%; }
+.wide { display: none; }
+
+@media (min-width: 900px) {
+  .phone { display: none; }
+  .wide { display: block; }
+}

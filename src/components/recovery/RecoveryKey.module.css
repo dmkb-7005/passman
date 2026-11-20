@@ -1,0 +1,78 @@
+.keyBlock { display: flex; flex-direction: column; gap: 12px; }
+.keyCard {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  padding: 20px 18px;
+  background: var(--surface);
+  border-radius: 20px;
+  font-family: var(--font-num);
+  font-weight: 600;
+  font-size: 22px;
+  line-height: 28px;
+  letter-spacing: 2px;
+  font-variant-numeric: tabular-nums;
+}
+.keyRow, .printRow { display: flex; align-items: center; justify-content: space-between; }
+.keyGroupWrap { display: contents; }
+.dash { width: 10px; height: 2px; flex: none; border-radius: 1px; background: var(--faint); }
+.keyButtons { display: flex; gap: 10px; }
+.keyButtons > * { flex: 1; }
+.confirm { display: flex; flex-direction: column; gap: 8px; margin-top: 4px; }
+.groupField { width: 176px; padding: 0 0 0 16px; }
+.groupInput {
+  font-family: var(--font-num);
+  font-weight: 600;
+  font-size: 22px;
+  letter-spacing: 4px;
+  text-transform: uppercase;
+  font-variant-numeric: tabular-nums;
+}
+.groupOk { display: flex; padding-right: 12px; color: var(--positive); }
+
+/* ---------- print sheet (A4, light) ---------- */
+.print { display: none; }
+@media print {
+  :global(#root) { display: none !important; }
+  :global(body) { background: #fff !important; }
+  @page { size: A4; margin: 0; }
+  .print {
+    display: flex;
+    flex-direction: column;
+    width: 210mm;
+    min-height: 297mm;
+    padding: 19mm;
+    color: #14171f;
+    background: #fff;
+    font-family: var(--font-ui);
+  }
+}
+.printMark { display: flex; align-items: center; gap: 14px; }
+.printLogo { width: 44px; height: 44px; display: flex; align-items: center; justify-content: center; border: 2px solid #14171f; border-radius: 12px; }
+.printBrand { font-size: 16px; font-weight: 600; letter-spacing: 0.2px; }
+.printTitle { margin: 40px 0 0; font-size: 40px; line-height: 48px; font-weight: 600; letter-spacing: -0.5px; }
+.printLead { margin: 12px 0 0; max-width: 560px; font-size: 16px; line-height: 25px; color: #4a5160; }
+.printKey {
+  margin-top: 40px;
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  padding: 36px 40px;
+  border: 2px solid #14171f;
+  border-radius: 16px;
+  font-family: var(--font-num);
+  font-weight: 600;
+  font-size: 44px;
+  line-height: 52px;
+  letter-spacing: 5px;
+  font-variant-numeric: tabular-nums;
+}
+.printDash { width: 18px; height: 3px; flex: none; background: #4a5160; }
+.printTable { margin-top: 36px; width: 100%; border-collapse: collapse; font-size: 16px; line-height: 22px; border-top: 1px solid #c9cdd5; }
+.printTable th { width: 150px; padding: 10px 24px 10px 0; text-align: left; font-weight: 500; color: #4a5160; border-bottom: 1px solid #c9cdd5; }
+.printTable td { padding: 10px 0; font-weight: 600; border-bottom: 1px solid #c9cdd5; }
+.printH2 { margin: 40px 0 0; font-size: 20px; line-height: 28px; font-weight: 600; }
+.printList { margin: 10px 0 0; padding-left: 22px; font-size: 16px; line-height: 25px; }
+.printNote { margin: 20px 0 0; font-size: 14px; line-height: 21px; color: #4a5160; }
+.printStored { margin-top: auto; display: flex; align-items: flex-end; gap: 12px; font-size: 14px; color: #4a5160; }
+.printLine { flex: 1; height: 18px; border-bottom: 1px solid #4a5160; }
