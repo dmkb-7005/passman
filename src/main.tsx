@@ -4,6 +4,7 @@ import { App } from './app/App';
 import { registerServiceWorker } from './app/updates';
 import { db } from './db/db';
 import { ensureDefaults } from './db/meta';
+import { captureSignInRedirect } from './sync/signIn';
 // Fonts are bundled (and precached by the service worker), never loaded from the network.
 import '@fontsource/inter/latin-400.css';
 import '@fontsource/inter/latin-500.css';
@@ -14,6 +15,8 @@ import '@fontsource/space-grotesk/latin-700.css';
 import './styles/global.css';
 
 async function start() {
+  // back from Dropbox's sign-in page: take ?code&state out of the address before the router starts
+  captureSignInRedirect();
   await ensureDefaults(db);
   // Only reduces eviction pressure; the Dropbox copy and backups remain essential.
   void navigator.storage?.persist?.();

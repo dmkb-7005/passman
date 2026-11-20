@@ -11,7 +11,6 @@ import {
   ArchiveIcon,
   CheckIcon,
   ChevronRight,
-  CloudIcon,
   DownloadIcon,
   ExternalIcon,
   LockIcon,
@@ -28,6 +27,7 @@ import { useSnackbar, useSnackbarPlacement } from '../../components/Snackbar';
 import { updateSettings, useMeta, useSettings } from '../../db/meta';
 import { backupStatus, daysAgo } from '../../domain/backupStatus';
 import { useVault } from '../../vault/VaultProvider';
+import { DropboxCard } from './DropboxCard';
 import t from '../shared/TabScreen.module.css';
 import s from './Settings.module.css';
 
@@ -77,7 +77,7 @@ function OptionSheet<T extends number>({ title, intro, options, label, value, on
   );
 }
 
-/** Settings (brief 07). Dropbox, backup and import arrive in later milestones; their rows say so. */
+/** Settings (brief 07). Backup and import arrive in later milestones; their rows say so. */
 export function SettingsPage() {
   const vault = useVault();
   const snackbar = useSnackbar();
@@ -120,17 +120,7 @@ export function SettingsPage() {
       <header className={`${t.header} ${s.header} ${scrolled ? s.headerScrolled : ''}`}><h1 className={t.title}>Settings</h1></header>
       <div className={`${t.scroll} ${s.body}`} onScroll={(e) => setScrolled(e.currentTarget.scrollTop > 4)}>
         <Section label="Sync">
-          <div className={`${t.glass} ${s.card}`}>
-            <div className={s.cardHead}>
-              <span className={s.circle}><CloudIcon /></span>
-              <div className={s.cardTitles}>
-                <span className={s.cardTitle}>Dropbox</span>
-                <span className={s.cardSub}>Not connected</span>
-              </div>
-            </div>
-            <p className={s.cardText}>Sync this vault between your phone, tablet and laptop. PassMan only sees its own folder in your Dropbox, and everything in it is encrypted.</p>
-            <button type="button" className={formStyles.primary} onClick={() => later('Dropbox sync')}>Connect Dropbox</button>
-          </div>
+          <DropboxCard />
         </Section>
 
         <Section label="Backup">

@@ -127,7 +127,8 @@ App shortcut (long-press on the icon): **Add login** → `./#/logins/new` (unloc
 ## 7. Status
 
 - **v0.3.0 (vault screens):** create vault with recovery key (and print sheet), unlock, recover, auto-lock, logins list with search, detail, add/edit/delete with Undo, generator (tab and sheet), Settings with auto-lock times, change master password, new recovery key, storage and version. Laptop layout with a left rail from 900 px.
-- **Not yet:** Dropbox sync, backup export/restore, Chrome import. Their buttons are in place as designed and say "arrives in the next version of PassMan".
+- **v0.4.0 (Dropbox sync):** connect in Settings, use the vault from Dropbox on a second device (Welcome), automatic sync with merge, sync chip and Settings card states, Sync now, Disconnect, sync problem sheet with Reconnect / Try again, "Dropbox already has a vault" choice.
+- **Not yet:** backup export/restore, Chrome import. Their buttons are in place as designed and say "arrives in the next version of PassMan".
 
 ## 8. Decisions
 - Approved 2026-11-20, including the defaults above (5 min idle / 1 min in background, 12-character minimum).

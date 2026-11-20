@@ -4,11 +4,14 @@ import { deriveKeyInWorker } from '../crypto/kdfWorkerClient';
 import {
   changePassword as rekeyPassword,
   createVault,
+  decryptSecret,
+  encryptSecret,
   openWithPassword,
   openWithRecoveryKey,
   replaceRecoveryKey,
   resetPasswordWithRecoveryKey,
   sealPayload,
+  withKeyset,
   type VaultFile,
   type VaultSession,
 } from '../crypto/vaultFile';
@@ -29,6 +32,7 @@ import {
   type Login,
   type LoginInput,
 } from '../domain/logins';
+import { fileVersion, integrateRemote } from '../sync/syncEngine';
 
 /*
  * The unlocked vault lives here, in memory only (docs/ARCHITECTURE.md §2.2). IndexedDB keeps just the encrypted
@@ -67,6 +71,25 @@ interface VaultApi {
   /** Settings › New recovery key: nothing changes until commitRecoveryKey. */
   prepareRecoveryKey: (password: string) => Promise<{ file: VaultFile; recoveryKey: string; createdAt: Date }>;
   commitRecoveryKey: (file: VaultFile) => Promise<void>;
+  /** Join from Dropbox: opens the downloaded vault with its master password and makes it this device's vault. */
+  adoptVault: (file: VaultFile, password: string) => Promise<void>;
+  /** Join from Dropbox with the recovery key: stores the downloaded vault (locked) for the Recover flow. */
+  installVault: (file: VaultFile) => Promise<void>;
+  /** fileVersion() of the stored vault while unlocked; changes with every save */
+  fileVersion: string | null;
+  /** for the Dropbox sync (src/sync/SyncProvider.tsx); every write goes through the vault's queue */
+  sync: SyncPort;
+}
+
+export interface SyncPort {
+  /** null while locked */
+  current(): { vaultId: string; file: VaultFile; version: string } | null;
+  /** merges another copy of this vault and stores the result */
+  integrate(remote: VaultFile): Promise<{ uploadNeeded: boolean }>;
+  /** "Use the vault in Dropbox": replaces this device's vault (needs that vault's master password) */
+  replaceWith(file: VaultFile, password: string): Promise<void>;
+  encryptSecret(purpose: string, text: string): Promise<{ iv: string; ciphertext: string }>;
+  decryptSecret(purpose: string, value: { iv: string; ciphertext: string }): Promise<string>;
 }
 
 const VaultContext = createContext<VaultApi | null>(null);
@@ -91,6 +114,7 @@ export function VaultProvider({ children }: { children: ReactNode }) {
   const [status, setStatus] = useState<VaultStatus>('loading');
   const [lockInfo, setLockInfo] = useState<LockInfo>(null);
   const [entries, setEntries] = useState<Entry[]>([]);
+  const [version, setVersion] = useState<string | null>(null);
   const session = useRef<VaultSession | null>(null);
   const entriesRef = useRef<Entry[]>([]);
   const queue = useRef<Promise<unknown>>(Promise.resolve());
@@ -99,8 +123,15 @@ export function VaultProvider({ children }: { children: ReactNode }) {
     void readFile().then((file) => setStatus(file ? 'locked' : 'empty'));
   }, []);
 
+  /** the session's file changed (saved): keep fileVersion in step */
+  const setFile = useCallback((s: VaultSession, file: VaultFile) => {
+    s.file = file;
+    if (session.current === s) setVersion(fileVersion(file));
+  }, []);
+
   const open = useCallback((s: VaultSession, list: Entry[]) => {
     session.current = s;
+    setVersion(fileVersion(s.file));
     entriesRef.current = list;
     setEntries(list);
     setLockInfo(null);
@@ -110,6 +141,7 @@ export function VaultProvider({ children }: { children: ReactNode }) {
   const lock = useCallback((info: LockInfo = { kind: 'manual' }) => {
     if (!session.current) return;
     session.current = null;
+    setVersion(null);
     entriesRef.current = [];
     setEntries([]);
     clearCopiedSecret();
@@ -133,11 +165,11 @@ export function VaultProvider({ children }: { children: ReactNode }) {
       const file = await sealPayload(s, { schemaVersion: PAYLOAD_SCHEMA_VERSION, logins: list });
       await writeFile(file);
       if (session.current !== s) return result; // locked meanwhile: saved, but not shown
-      s.file = file;
+      setFile(s, file);
       entriesRef.current = list;
       setEntries(list);
       return result;
-    }), [serial]);
+    }), [serial, setFile]);
 
   const api = useMemo<VaultApi>(() => {
     const findLogin = (list: Entry[], id: string): Login => {
@@ -206,7 +238,7 @@ export function VaultProvider({ children }: { children: ReactNode }) {
           if (!s) throw new Error('The vault is locked');
           const file = await rekeyPassword(s.file, current, next, derive);
           await writeFile(file);
-          s.file = file;
+          setFile(s, file);
         }),
       prepareRecoveryKey: async (password) => {
         const s = session.current;
@@ -221,10 +253,61 @@ export function VaultProvider({ children }: { children: ReactNode }) {
           // keep the newest payload, take the new keyset
           const merged: VaultFile = { ...s.file, keyset: file.keyset };
           await writeFile(merged);
-          s.file = merged;
+          setFile(s, merged);
         }),
+      adoptVault: (file, password) =>
+        serial(async () => {
+          const opened = await openWithPassword(file, password, derive);
+          await writeFile(opened.session.file);
+          open(opened.session, opened.payload.logins);
+        }),
+      installVault: (file) =>
+        serial(async () => {
+          if (session.current || (await readFile())) throw new Error('This device already has a vault');
+          await writeFile(file);
+          setStatus('locked');
+        }),
+      fileVersion: version,
+      sync: {
+        current: () => {
+          const s = session.current;
+          return s ? { vaultId: s.vaultId, file: s.file, version: fileVersion(s.file) } : null;
+        },
+        integrate: (remote) =>
+          serial(async () => {
+            const s = session.current;
+            if (!s) throw new Error('The vault is locked');
+            const merged = await integrateRemote(s, entriesRef.current, remote);
+            if (!merged.localChanged) return { uploadNeeded: merged.uploadNeeded };
+            const sealed = withKeyset(await sealPayload(s, { schemaVersion: PAYLOAD_SCHEMA_VERSION, logins: merged.entries }), merged.keyset);
+            await writeFile(sealed);
+            if (session.current === s) {
+              setFile(s, sealed);
+              entriesRef.current = merged.entries;
+              setEntries(merged.entries);
+            }
+            return { uploadNeeded: merged.uploadNeeded };
+          }),
+        replaceWith: (file, password) =>
+          serial(async () => {
+            if (!session.current) throw new Error('The vault is locked');
+            const opened = await openWithPassword(file, password, derive);
+            await writeFile(opened.session.file);
+            open(opened.session, opened.payload.logins);
+          }),
+        encryptSecret: async (purpose, text) => {
+          const s = session.current;
+          if (!s) throw new Error('The vault is locked');
+          return encryptSecret(s, purpose, text);
+        },
+        decryptSecret: async (purpose, value) => {
+          const s = session.current;
+          if (!s) throw new Error('The vault is locked');
+          return decryptSecret(s, purpose, value);
+        },
+      },
     };
-  }, [status, lockInfo, entries, open, lock, mutate, serial]);
+  }, [status, lockInfo, entries, version, open, lock, mutate, serial, setFile]);
 
   useAutoLock(status === 'unlocked', lock);
 

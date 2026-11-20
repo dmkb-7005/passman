@@ -25,7 +25,7 @@ export function WelcomePage() {
         <div className={s.actions}>
           <button type="button" className={formStyles.primary} onClick={() => navigate('/welcome/create')}>Create a new vault</button>
           <div className={s.secondaryGroup}>
-            <button type="button" className={formStyles.secondary} onClick={() => later('Using your vault from Dropbox')}>Use my vault from Dropbox</button>
+            <button type="button" className={formStyles.secondary} onClick={() => navigate('/welcome/dropbox')}>Use my vault from Dropbox</button>
             <div className={s.subline}>On your second or third device</div>
           </div>
           <button type="button" className={formStyles.textLink} onClick={() => later('Restoring a backup file')}>Restore a backup file</button>

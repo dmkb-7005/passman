@@ -67,7 +67,15 @@ src/
     importPlan.ts       duplicates review and applying the decisions
     generator.ts        password generator
     autolock.ts         lock decisions from timestamps
-  sync/               (sync milestone) dropboxAuth.ts, dropboxClient.ts, syncEngine.ts
+  sync/
+    dropboxAuth.ts      App key (public), PKCE authorize URL, token exchange, refresh, revoke
+    dropboxClient.ts    the four Dropbox calls (get_metadata, download, upload add/update(rev), account)
+    contentHash.ts      Dropbox content_hash (checks every download)
+    syncEngine.ts       the sync loop (pure, tested against a simulated Dropbox), merging a downloaded copy
+    signIn.ts           the sign-in round trip: leave for Dropbox, catch ?code&state before the router
+    syncMeta.ts         `meta.sync` (connection, last synced rev, encrypted refresh token)
+    SyncProvider.tsx    when to sync, status for the chip and Settings, the "Dropbox already has a vault" choice
+    VaultChoiceSheet.tsx, SyncProblemSheet.tsx
   vault/
     VaultProvider.tsx   unlocked state in memory: create, unlock, recover, lock, add/edit/delete (+ undo),
                         change password, new recovery key; serialised writes; auto-lock (idle + background)
@@ -96,10 +104,10 @@ There's no global state library: `VaultProvider` is a React context with a reduc
 3. Start auto-lock timers; start a sync if Dropbox is connected.
 
 ### 4.2 Saving a change
-Update the in-memory logins (set `updatedAt`; deletion → tombstone) → re-encrypt the whole payload → write the vault file to IndexedDB → mark `dirty` → debounced sync (3 s). A few hundred logins re-encrypt in milliseconds.
+Update the in-memory logins (set `updatedAt`; deletion → tombstone) → re-encrypt the whole payload → write the vault file to IndexedDB → the file's version (`keysetId:iv`) no longer matches `meta.sync.syncedVersion` → sync 1.5 s later. A few hundred logins re-encrypt in milliseconds.
 
 ### 4.3 Sync
-One sync at a time (`navigator.locks`, also across tabs).
+One sync at a time per window. Triggers: unlocking, 1.5 s after a change, **Sync now**, coming back to the foreground (at most every 30 s) or online, and every 5 minutes while unlocked. Locked = no sync.
 
 ```text
 meta = get_metadata(/passman.vault)
@@ -111,17 +119,18 @@ meta = get_metadata(/passman.vault)
                        → save merged locally
                        → if merged != remote: upload(mode: update(remote rev))
 upload returns 409 conflict → start again (max 3 times, then "Sync problem")
-success → lastSyncedRev = new rev, dirty = false, lastSyncAt = now
+success → lastSyncedRev = new rev, syncedVersion = the local file's version, lastSyncedAt = now
 ```
 
 - **Integrity:** every download is checked against Dropbox's `content_hash`.
 - **Key changes:** the header carries `keysetId` and `keysetUpdatedAt`. If they differ, the newer keyset is kept (password changed or new recovery key on another device). The DEK is the same, so the open session continues.
-- **Different `vaultId`** (vault replaced by a restore on another device): stop syncing and ask "Your vault was replaced on another device. Load it?" → then enter that vault's password.
+- **Different `vaultId`** (another device's own vault, or a vault replaced elsewhere): never merged or overwritten automatically. The "Dropbox already has a vault" sheet asks: **Use the vault in Dropbox** (enter its master password; this device's vault is replaced) or **Keep this device's vault** (upload with `update(rev)`; replaced on all devices). **Cancel** disconnects this device. The sheet can't show the Dropbox vault's login count: it is encrypted with that vault's key.
 - **Tokens:** the access token (4 h) is kept in memory only; the refresh token is stored encrypted and refreshed when needed (confirmed in the spike).
-- **Offline / errors:** the status shows it; the next trigger retries. No data is lost because the local vault is always saved first.
+- **Offline / errors:** offline → "Not synced yet", synced when back online. Network failure while online → 2 retries (2 s, 6 s), then "Sync problem" (Try again). Rejected sign-in (401 / `invalid_grant`) → "Sync problem" (Reconnect). No data is lost because the local vault is always saved first.
+- **Tests:** `sync.test.ts` runs the loop against an in-memory Dropbox with revs and conflicts; the browser test (`e2e/sync.mjs`, not shipped) runs 5 devices against a simulated Dropbox, including the PKCE round trip.
 
 ### 4.4 Dropbox sign-in
-PKCE with `token_access_type=offline`. Redirect URI = the app's base URL (`https://<owner>.github.io/passman/`). `main.tsx` handles `?code=…&state=…` before the router starts, swaps it for tokens, stores the refresh token encrypted, and cleans the URL. The verifier and state live in `sessionStorage` during the round trip. Sign-in is only offered while unlocked, so the token can be encrypted straight away.
+PKCE with `token_access_type=offline`; the App key is public (no app secret exists in PassMan). Redirect URI = the app's base URL (`https://dmkb-7005.github.io/passman/`, plus `http://localhost:4173/passman/` for local tests). The verifier, state and return route live in `localStorage` during the round trip (max. 30 min). `main.tsx` takes `?code&state` out of the address before the router starts and restores the route; the code is exchanged right away. Because the app comes back **locked**, the tokens wait in memory until the vault is unlocked, then the refresh token is encrypted with the DEK and stored. From Welcome (second device), the vault is downloaded first and opened with its master password (or recovery key), then the connection is stored.
 
 ### 4.5 Import
 Parse CSV in memory (handles BOM, CRLF, quoted commas, line breaks inside quotes) → map columns → find duplicates against the vault and within the file → review screen → apply as normal changes (one save, one sync). The file contents are never stored.

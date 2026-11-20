@@ -1,0 +1,54 @@
+/* Dropbox sync UI: "Dropbox already has a vault" sheet and the "Sync problem" sheet (brief 08). */
+
+.choiceBody { display: flex; flex-direction: column; gap: 14px; padding: 4px 20px 0; overflow-y: auto; min-height: 0; }
+.choiceHead { display: flex; align-items: center; gap: 12px; }
+.warnCircle { flex: none; width: 48px; height: 48px; display: flex; align-items: center; justify-content: center; border-radius: 24px; color: var(--warn); background: var(--warn-bg); }
+.choiceTitle { margin: 0; font-size: 20px; line-height: 26px; font-weight: 600; }
+.lead { margin: 0; font-size: 14px; line-height: 20px; color: var(--text-2); }
+
+.facts { display: flex; gap: 10px; }
+.fact { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 2px; padding: 12px; background: var(--bg); border-radius: 14px; }
+.factLabel { font-size: 13px; line-height: 18px; font-weight: 500; color: var(--muted); }
+.factMain { font-size: 15px; line-height: 22px; }
+.factNum { font-family: var(--font-num); font-weight: 600; font-size: 18px; font-variant-numeric: tabular-nums; }
+.factSub { font-size: 13px; line-height: 18px; color: var(--text-2); }
+
+.options { display: flex; flex-direction: column; gap: 10px; }
+.option {
+  width: 100%;
+  display: flex;
+  gap: 12px;
+  padding: 14px;
+  text-align: left;
+  font-family: var(--font-ui);
+  color: var(--text);
+  background: transparent;
+  border: 1.5px solid var(--border);
+  border-radius: 16px;
+}
+.optionOn { border-color: var(--accent); background: rgba(61, 155, 255, 0.08); }
+.optionDanger { border-color: var(--danger-border); }
+.optionDanger.optionOn { border-color: var(--danger); background: rgba(255, 138, 144, 0.08); }
+.radio { flex: none; width: 22px; height: 22px; margin-top: 1px; display: flex; align-items: center; justify-content: center; border: 2px solid var(--muted); border-radius: 11px; }
+.optionOn .radio { border-color: var(--accent); }
+.optionDanger.optionOn .radio { border-color: var(--danger); }
+.dot { width: 10px; height: 10px; border-radius: 5px; background: var(--accent); }
+.optionDanger .dot { background: var(--danger); }
+.optionText { flex: 1; display: flex; flex-direction: column; gap: 4px; }
+.optionTitle { font-size: 16px; line-height: 22px; font-weight: 600; }
+.optionDanger .optionTitle { color: var(--danger); }
+.optionSub { font-size: 14px; line-height: 20px; color: var(--text-2); }
+.tag { align-self: flex-start; height: 22px; display: flex; align-items: center; padding: 0 8px; font-size: 12px; font-weight: 600; color: var(--accent); background: var(--info-bg); border-radius: 11px; }
+
+.actions { flex: none; display: flex; flex-direction: column; gap: 4px; padding: 16px 16px 20px; }
+.dangerPrimary { color: #2a0e12; background: var(--danger); }
+.cancel { height: 48px; font-family: var(--font-ui); font-size: 15px; font-weight: 600; color: var(--text-2); background: transparent; border: 0; }
+.accentLink { align-self: center; height: 48px; display: flex; align-items: center; padding: 0 12px; font-family: var(--font-ui); font-size: 15px; font-weight: 600; color: var(--accent); background: none; border: 0; }
+
+/* sync problem sheet */
+.problemBody { display: flex; flex-direction: column; gap: 14px; padding: 0 20px; }
+.problemLine { display: flex; gap: 12px; align-items: flex-start; }
+.dangerCircle { flex: none; width: 40px; height: 40px; display: flex; align-items: center; justify-content: center; border-radius: 20px; color: var(--danger); background: var(--danger-badge-bg); }
+.problemText { margin: 0; padding-top: 9px; font-size: 16px; line-height: 22px; font-weight: 600; }
+.num { font-family: var(--font-num); font-variant-numeric: tabular-nums; }
+.problemActions { display: flex; flex-direction: column; gap: 4px; padding: 20px 16px 20px; }

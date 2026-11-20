@@ -27,3 +27,11 @@ export function describeDevice(userAgent: string = navigator.userAgent): string 
   if (/Linux/i.test(userAgent)) return 'Linux computer';
   return 'This device';
 }
+
+/** `today · 10:12`, otherwise the house date style (`Wed, 18‑11‑2026 · 21:06`). */
+export function syncedLabel(iso: string, withTime = true, now: Date = new Date()): string {
+  const d = new Date(iso);
+  if (Number.isNaN(d.getTime())) return '';
+  if (d.toDateString() === now.toDateString()) return `today · ${two(d.getHours())}:${two(d.getMinutes())}`;
+  return displayDateTime(iso, withTime);
+}

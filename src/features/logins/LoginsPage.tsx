@@ -122,7 +122,7 @@ export function LoginsPage() {
     <div className={t.screen}>
       <header className={t.header}>
         <h1 className={t.title}>Logins</h1>
-        <SyncChip state="not-connected" />
+        <SyncChip />
         <button type="button" className={t.iconButton} aria-label="Lock now" onClick={() => vault.lock({ kind: 'manual' })}><LockIcon /></button>
       </header>
 

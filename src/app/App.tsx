@@ -11,7 +11,9 @@ import { RecoverPage } from '../features/unlock/RecoverPage';
 import { UnlockPage } from '../features/unlock/UnlockPage';
 import { CreateVaultPage } from '../features/welcome/CreateVaultPage';
 import { DonePage } from '../features/welcome/DonePage';
+import { DropboxJoinPage } from '../features/welcome/DropboxJoinPage';
 import { WelcomePage } from '../features/welcome/WelcomePage';
+import { SyncProvider } from '../sync/SyncProvider';
 import { useVault, VaultProvider } from '../vault/VaultProvider';
 import { TabLayout } from './TabLayout';
 import { UpdateProvider } from './UpdateProvider';
@@ -22,9 +24,11 @@ export function App() {
     <HashRouter>
       <SnackbarProvider>
         <VaultProvider>
-          <UpdateProvider>
-            <GatedRoutes />
-          </UpdateProvider>
+          <SyncProvider>
+            <UpdateProvider>
+              <GatedRoutes />
+            </UpdateProvider>
+          </SyncProvider>
         </VaultProvider>
       </SnackbarProvider>
     </HashRouter>
@@ -47,6 +51,7 @@ function GatedRoutes() {
       <Routes>
         <Route path="/welcome" element={<WelcomePage />} />
         <Route path="/welcome/create" element={<CreateVaultPage />} />
+        <Route path="/welcome/dropbox" element={<DropboxJoinPage />} />
         <Route path="*" element={<Navigate to="/welcome" replace />} />
       </Routes>
     );

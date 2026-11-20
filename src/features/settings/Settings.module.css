@@ -81,3 +81,17 @@
 .radioMark { flex: none; width: 22px; height: 22px; display: flex; align-items: center; justify-content: center; border: 2px solid var(--muted); border-radius: 11px; }
 .radioOn .radioMark { border-color: var(--accent); }
 .radioDot { width: 10px; height: 10px; border-radius: 5px; background: var(--accent); }
+
+/* ---------- Dropbox card ---------- */
+.ellipsis { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.statusLine { display: flex; align-items: center; gap: 8px; font-size: 14px; line-height: 20px; color: var(--text-2); }
+.statusIcon { display: flex; }
+.ok { color: var(--positive); }
+.spinIcon { color: var(--accent); animation: settings-spin 1.2s linear infinite; }
+@keyframes settings-spin { to { transform: rotate(360deg); } }
+.syncActions { display: flex; align-items: center; gap: 8px; }
+.syncNow { flex: 1; }
+.disconnect { height: 48px; padding: 0 16px; font-family: var(--font-ui); font-size: 15px; font-weight: 600; color: var(--danger); background: transparent; border: 0; border-radius: 24px; }
+.problemCard { background: var(--danger-bg); border: 1.5px solid var(--danger-border); border-radius: 20px; }
+.problemText { margin: 0; font-size: 14px; line-height: 20px; color: var(--text); }
+.problemText b { font-weight: 600; }

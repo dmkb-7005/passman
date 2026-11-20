@@ -74,3 +74,13 @@
 .nextSub { font-size: 13px; line-height: 18px; color: var(--muted); }
 .chevron { flex: none; display: flex; color: var(--muted); }
 .divider { height: 1px; margin-left: 70px; background: var(--glass-border); }
+
+/* ---------- use my vault from Dropbox (brief 08 · 1) ---------- */
+.securingCopy { display: flex; flex-direction: column; align-items: center; }
+.titleBlock { display: flex; flex-direction: column; gap: 6px; }
+.meta { margin: 0; font-size: 13px; line-height: 18px; color: var(--muted); }
+.linkStart { align-self: flex-start; padding: 0; }
+.strong { font-weight: 600; color: var(--text); }
+.footerStack { display: flex; flex-direction: column; align-items: stretch; gap: 4px; }
+.tallSecondary { height: 56px; }
+.accentLink { align-self: center; height: 48px; display: flex; align-items: center; padding: 0 12px; font-family: var(--font-ui); font-size: 15px; font-weight: 600; color: var(--accent); background: none; border: 0; }

@@ -97,8 +97,7 @@ db.version(1).stores({
 | `schemaVersion` | `1` | |
 | `deviceId` | uuid | Created on first start |
 | `settings` | see §5 | Per device, not synced |
-| `sync` | `{ lastSyncedRev, lastSyncAt, dirty, lastError }` | |
-| `dropbox` | `{ accountId, refreshToken: { iv, ciphertext } }` | Refresh token encrypted with the DEK; absent when disconnected |
+| `sync` | `{ accountId, email, refreshToken: { iv, ciphertext }, lastSyncedRev, syncedVersion, lastSyncedAt }` | Absent when not connected. Refresh token encrypted with the DEK (`encryptSecret`, purpose `dropbox-refresh-token`). `syncedVersion` = `keysetId:payloadIv` of the local file at the last sync; any other value means local changes to upload. Sync problems are not stored (found again on the next sync) |
 | `lastBackupAt` | ISO timestamp | Device state, as in the playbook |
 
 ## 5. Settings (per device)
