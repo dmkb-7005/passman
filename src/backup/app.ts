@@ -1,2 +1,2 @@
-/** Identifies this app's backup files (`"app"` field) and names them `<APP_ID>-backup-YYYY-MM-DD.json`. */
-export const APP_ID = 'myapp';
+/** Names backup files `<APP_ID>-backup-YYYY-MM-DD.json(.txt)`. */
+export const APP_ID = 'passman';

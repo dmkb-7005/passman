@@ -1,2 +1,4 @@
 /// <reference types="vite/client" />
-/// <reference types="vite-plugin-pwa/react" />
+
+/** Injected by vite.config.ts (`define`). */
+declare const __BUILD_INFO__: import('./app/buildInfo').BuildInfo;

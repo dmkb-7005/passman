@@ -1,12 +1,12 @@
 import { NavLink, Outlet } from 'react-router-dom';
-import { GearIcon, HomeIcon, ListIcon } from '../components/icons';
+import { DiceIcon, GearIcon, KeyIcon } from '../components/icons';
 import styles from './TabLayout.module.css';
 
-/** 3–5 tabs. `end: false` keeps a tab active on its subpages (e.g. /setup/categories). */
+/** 3–5 tabs. `end: false` keeps a tab active on its subpages (e.g. /settings/password). */
 const TABS = [
-  { to: '/', label: 'Home', icon: HomeIcon, end: true },
-  { to: '/items', label: 'Items', icon: ListIcon, end: true },
-  { to: '/setup', label: 'Setup', icon: GearIcon, end: false },
+  { to: '/', label: 'Logins', icon: KeyIcon, end: true },
+  { to: '/generator', label: 'Generator', icon: DiceIcon, end: true },
+  { to: '/settings', label: 'Settings', icon: GearIcon, end: false },
 ] as const;
 
 /** Height of the navigation bar without the safe area (6 + 64 + 14). */

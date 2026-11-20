@@ -14,28 +14,36 @@ concurrency:
   group: pages
   cancel-in-progress: true
 
+# Actions are pinned to commit SHAs (tags can be moved); see docs/ARCHITECTURE.md §5.2.
 jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4.4.0
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4.4.0
         with:
           node-version: 22
           cache: npm
       - run: npm ci
       - run: npm test
       - run: npm run build
-      - uses: actions/upload-pages-artifact@v3
+        env:
+          # shown in the app's Update dialog and Settings (version.json)
+          BUILD_COMMIT: ${{ github.sha }}
+          BUILD_DEPLOYED_BY: ${{ github.actor }}
+          BUILD_REPO_URL: ${{ github.server_url }}/${{ github.repository }}
+          BUILD_RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+      - uses: actions/upload-pages-artifact@56afc609e74202658d3ffba0e8f6dda462b719fa # v3.0.1
         with:
           path: dist
 
   deploy:
     needs: build
     runs-on: ubuntu-latest
+    # Settings → Environments → github-pages → Required reviewers: you. Every deploy then waits for your approval.
     environment:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
     steps:
       - id: deployment
-        uses: actions/deploy-pages@v4
+        uses: actions/deploy-pages@d6db90164ac5ed86f2b6aed7e0febac5b3c0c03e # v4.0.5

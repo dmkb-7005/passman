@@ -4,7 +4,7 @@
   background: rgba(5, 8, 14, 0.7);
 }
 .dialog {
-  width: 100%; max-width: 360px; padding: 24px 20px 20px; text-align: center;
+  width: 100%; max-width: 380px; max-height: 100%; overflow-y: auto; padding: 24px 20px 18px; text-align: center;
   background: var(--surface); border: 1px solid rgba(61, 155, 255, 0.45); border-radius: 24px;
   box-shadow: 0 16px 48px rgba(0, 0, 0, 0.55);
 }
@@ -14,7 +14,34 @@
 }
 .title { margin: 14px 0 0; font-size: 20px; font-weight: 600; }
 .text { margin: 8px 0 0; color: var(--text-2); font-size: 14px; line-height: 20px; }
-.buttons { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-top: 20px; }
+
+.details {
+  margin: 16px 0 0; padding: 4px 14px; text-align: left;
+  background: var(--surface-2); border-radius: 14px;
+}
+.detailRow { display: grid; grid-template-columns: 72px 1fr; gap: 8px; padding: 8px 0; font-size: 14px; line-height: 20px; }
+.detailRow + .detailRow { border-top: 1px solid var(--border); }
+.detailRow dt { color: var(--muted); font-size: 13px; }
+.detailRow dd { margin: 0; color: var(--text); overflow-wrap: anywhere; }
+.muted { color: var(--muted); }
+.mono { font-family: var(--font-num); font-variant-numeric: tabular-nums; }
+
+.warning {
+  display: flex; gap: 8px; align-items: flex-start; margin-top: 16px; padding: 10px 12px; text-align: left;
+  color: var(--text); font-size: 13px; line-height: 18px;
+  background: var(--warn-bg); border: 1px solid rgba(242, 179, 75, 0.33); border-radius: 14px;
+}
+.warning svg { flex: none; margin-top: 2px; color: var(--warn); }
+
+.links { display: flex; justify-content: center; flex-wrap: wrap; gap: 4px 18px; margin-top: 12px; }
+.links a {
+  display: inline-flex; align-items: center; gap: 4px; min-height: 32px;
+  color: var(--accent); font-size: 14px; font-weight: 500; text-decoration: none;
+}
+
+.buttons { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-top: 16px; }
 .ignore, .reload { height: 52px; font-size: 16px; font-weight: 600; border: 0; border-radius: 26px; }
 .ignore { color: var(--text); background: var(--surface-2); }
 .reload { color: var(--on-accent); background: var(--accent); }
+.ignore:disabled, .reload:disabled { opacity: 0.6; }
+.footnote { margin: 10px 0 0; color: var(--muted); font-size: 12px; line-height: 16px; }

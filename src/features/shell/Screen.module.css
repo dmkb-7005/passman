@@ -1,0 +1,30 @@
+/* Shared layout for tab screens: header + scrolling body (night-ridges background comes from TabLayout). */
+.screen { position: relative; flex: 1; min-height: 0; display: flex; flex-direction: column; }
+.header { display: flex; align-items: center; justify-content: space-between; gap: 8px; height: 56px; padding: 24px 16px 0; flex: none; }
+.title { margin: 0; font-size: 22px; font-weight: 600; }
+.scroll { flex: 1; min-height: 0; overflow-y: auto; padding: 12px 0 24px; overscroll-behavior: contain; }
+.sectionLabel { margin: 12px 20px 6px; color: var(--muted); font-size: 12px; font-weight: 600; letter-spacing: 0.6px; }
+.card {
+  margin: 0 16px 12px; padding: 16px;
+  background: var(--glass); border: 1px solid var(--glass-border); border-radius: 20px;
+  backdrop-filter: blur(18px); -webkit-backdrop-filter: blur(18px);
+}
+.cardLabel { color: var(--muted); font-size: 13px; }
+.cardText { margin: 8px 0 0; color: var(--text-2); font-size: 14px; line-height: 20px; }
+.emptyIcon {
+  width: 52px; height: 52px; display: flex; align-items: center; justify-content: center;
+  color: var(--accent); background: var(--info-bg); border-radius: 26px;
+}
+.emptyTitle { margin: 14px 0 0; font-size: 18px; font-weight: 600; }
+
+/* full-screen form placeholder (no bottom navigation) */
+.formScreen {
+  min-height: 100dvh; max-width: 560px; margin: 0 auto;
+  padding: env(safe-area-inset-top, 0px) 0 env(safe-area-inset-bottom, 0px);
+}
+.formHeader { display: flex; align-items: center; gap: 4px; height: 56px; padding: 0 8px; }
+.backButton {
+  width: 48px; height: 48px; display: flex; align-items: center; justify-content: center;
+  color: var(--text); background: none; border: 0; border-radius: 24px; text-decoration: none;
+}
+.formTitle { margin: 0; font-size: 20px; font-weight: 600; }

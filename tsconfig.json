@@ -26,5 +26,8 @@
     "src",
     "tools",
     "vite.config.ts"
+  ],
+  "exclude": [
+    "src/sw.ts"
   ]
 }

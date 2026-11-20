@@ -78,3 +78,12 @@ export const PaletteIcon = ({ size = 20, ...r }: P) => (
 );
 export const FileIcon = ({ size = 20, ...r }: P) => <svg {...base(size, r)}><path d="M6 3h8l4 4v14H6z" /><path d="M14 3v4h4" /></svg>;
 export const DownloadIcon = ({ size = 16, ...r }: P) => <svg {...base(size, r)}><path d="M12 4v12M7 11l5 5 5-5" /><path d="M5 20h14" /></svg>;
+export const KeyIcon = ({ size = 20, ...r }: P) => (
+  <svg {...base(size, r)}><circle cx="8" cy="15" r="4" /><path d="M10.8 12.2L20 3M16 7l3 3M14 9l2 2" /></svg>
+);
+export const DiceIcon = ({ size = 20, ...r }: P) => (
+  <svg {...base(size, r)}><rect x="4" y="4" width="16" height="16" rx="3" /><path d="M8.5 8.5h.01M15.5 8.5h.01M12 12h.01M8.5 15.5h.01M15.5 15.5h.01" strokeWidth={3} /></svg>
+);
+export const ExternalIcon = ({ size = 16, ...r }: P) => (
+  <svg {...base(size, r)}><path d="M14 4h6v6M20 4l-9 9" /><path d="M18 14v5a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V7a1 1 0 0 1 1-1h5" /></svg>
+);
