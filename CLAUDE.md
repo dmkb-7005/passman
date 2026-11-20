@@ -40,3 +40,4 @@ Full table and reasons in `docs/ARCHITECTURE.md` §1. In short:
 
 - Zip of changed files (unzips over the repo root) + a list of files to delete.
 - I run `npm run typecheck && npm test && npm run build` before pushing, and test on the phone with the checklist you give me.
+- new test line here
