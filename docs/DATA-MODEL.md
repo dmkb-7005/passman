@@ -47,7 +47,7 @@ The header is validated with Zod before any decryption. Unknown `format` or a ne
 |---|---|---|
 | `id` | string | `crypto.randomUUID()` |
 | `name` | string | Required, trimmed, 1–100 characters |
-| `url` | string | Optional, trimmed, max 2 000; stored as entered (no `https://` added automatically, but links open with `https://` if no scheme) |
+| `url` | string | Optional (empty string if none), trimmed, max 2 000; stored as entered (no `https://` added automatically, but links open with `https://` if no scheme) |
 | `username` | string | Optional (empty string if none), trimmed, max 200. UI label "Username or email" |
 | `password` | string | Required, 1–1 000 characters, **not** trimmed |
 | `createdAt` | ISO timestamp | |
@@ -61,12 +61,13 @@ The header is validated with Zod before any decryption. Unknown `format` or a ne
 | `deleted` | `true` |
 | `updatedAt` | ISO timestamp of the deletion |
 
-Tombstones are kept indefinitely (about 80 bytes each) so that an offline device can't bring a deleted login back. **Undo** within 6 s turns a tombstone back into the login with a new `updatedAt`.
+A change always gets an `updatedAt` later than the version it replaces, even if the device clock is behind. Tombstones are kept indefinitely (about 80 bytes each) so that an offline device can't bring a deleted login back. **Undo** within 6 s turns a tombstone back into the login with a new `updatedAt`.
 
 ### Derived (computed, never stored)
 - `siteKey`: from `url` → host in lower case without `www.` (for `android://…@com.example.app/` → the package name `com.example.app`); without a URL → `name` in lower case, accents removed, spaces collapsed.
 - `usernameKey`: `username` trimmed, lower case.
-- Duplicate = same `siteKey` and same `usernameKey`. Identical = duplicate with the same password.
+- Duplicate = same `siteKey` and same `usernameKey`. Identical = duplicate with the same password. Imported rows are compared with the vault first (deleted logins ignored), then with earlier rows of the same file.
+- Passwords are NFC-normalised before key derivation, so the same password typed on Android and Windows gives the same key.
 - Sort and search: `name` ignoring case and accents; search also matches `url` and `username`.
 
 ## 3. Merge rules (`domain/merge.ts`)

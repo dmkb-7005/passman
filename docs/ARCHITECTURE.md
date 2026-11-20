@@ -52,16 +52,19 @@ src/
   main.tsx            fonts, global.css, ensureDefaults, storage.persist, OAuth redirect check, render
   app/                App.tsx (routes + lock gate), TabLayout, UpdateBanner, version.ts
   crypto/             pure crypto, no React
-    kdf.worker.ts       Argon2id in a worker (hash-wasm)
-    kdf.ts              promise wrapper around the worker
-    keys.ts             DEK create, wrap/unwrap, HKDF for recovery key
+    bytes.ts            base64url, UTF-8, random bytes
+    aes.ts              AES-256-GCM encrypt/decrypt, HKDF for the recovery key
+    kdf.ts              Argon2id (hash-wasm), parameters and limits
+    kdf.worker.ts       Argon2id in a worker; kdfWorkerClient.ts is the promise wrapper (browser only)
     recoveryKey.ts      generate, format, parse/normalise (Crockford)
-    vaultFile.ts        build/open/re-key the vault file, Zod validation of header and payload
+    vaultFile.ts        create/open/seal the vault file, change password, reset with recovery key,
+                        new recovery key, small secrets; Zod validation of header and payload
   domain/             pure logic, no React, no Dexie
-    logins.ts           validation, siteKey, search, sort
+    logins.ts           types + Zod schema, validation, edits, siteKey, search, sort, urlForOpening
+    masterPassword.ts   master password rules
     merge.ts            merge(local, remote) per login, tombstones
-    duplicates.ts       find duplicates for import
     chromeCsv.ts        CSV parser (RFC 4180) + Chrome column mapping
+    importPlan.ts       duplicates review and applying the decisions
     generator.ts        password generator
     autolock.ts         lock decisions from timestamps
   sync/
@@ -159,7 +162,7 @@ object-src 'none'; base-uri 'none'; form-action 'none'
 Plus `<meta name="referrer" content="no-referrer">`. If Vite's build needs `'unsafe-inline'` for styles, it gets documented here. Dropbox sign-in is a full-page navigation, so `connect-src` doesn't need `www.dropbox.com`.
 
 ## 7. Testing
-- `crypto/`: create/open round trip; wrong password and tampered header or payload fail; recovery-key path; re-key keeps the DEK; recovery-key parsing (case, dashes, O/0, I/L/1).
+- `crypto/`: Argon2id reference vector; create/open round trip; wrong password and tampered header or payload fail; recovery-key path; re-key keeps the DEK; recovery-key parsing (case, dashes, O/0, I/L/1); NFC passwords; absurd KDF parameters rejected. The worker was also checked in Chrome under the CSP (reference vector, ~0.4 s for 64 MiB / 2 passes on the build machine).
 - `domain/`: merge (edit vs edit, edit vs delete both ways, new on both sides, identical); duplicates (host vs name, `www.`, `android://` app URLs, case and accents); CSV edge cases; generator (length, each class present, no look-alikes, only allowed characters); auto-lock decisions.
 - `sync/`: sync engine with a fake Dropbox (first upload, no change, remote changed, local dirty, 409 then retry, vault replaced, offline).
 - Manual: Argon2 timing on the phone; full flows on all three devices (checklist in the playbook §11 plus sync between two devices, offline edit then sync, recovery).

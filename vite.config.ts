@@ -106,7 +106,7 @@ export default defineConfig({
         shortcuts: [
           {
             name: 'Add login',
-            short_name: 'Add',
+            short_name: 'Add login',
             url: './#/logins/new',
             icons: [
               { src: 'icons/shortcut-add-96.png', sizes: '96x96', type: 'image/png' },
