@@ -187,10 +187,10 @@ export function PasswordField({
   );
 }
 
-export function Note({ kind, children }: { kind: 'info' | 'warn' | 'error'; children: ReactNode }) {
+export function Note({ kind, children }: { kind: 'info' | 'warn' | 'error' | 'success'; children: ReactNode }) {
   return (
-    <div className={`${s.note} ${kind === 'info' ? s.noteInfo : kind === 'warn' ? s.noteWarn : s.noteError}`} role={kind === 'error' ? 'alert' : undefined}>
-      <span className={s.noteIcon}>{kind === 'info' ? <InfoIcon /> : kind === 'warn' ? <WarnIcon /> : <AlertIcon size={18} />}</span>
+    <div className={`${s.note} ${kind === 'info' ? s.noteInfo : kind === 'warn' ? s.noteWarn : kind === 'success' ? s.noteSuccess : s.noteError}`} role={kind === 'error' ? 'alert' : undefined}>
+      <span className={s.noteIcon}>{kind === 'info' ? <InfoIcon /> : kind === 'warn' ? <WarnIcon /> : kind === 'success' ? <CheckIcon size={18} /> : <AlertIcon size={18} />}</span>
       <span>{children}</span>
     </div>
   );

@@ -13,6 +13,7 @@ import { CreateVaultPage } from '../features/welcome/CreateVaultPage';
 import { DonePage } from '../features/welcome/DonePage';
 import { DropboxJoinPage } from '../features/welcome/DropboxJoinPage';
 import { ImportPage } from '../features/import/ImportPage';
+import { RestorePage } from '../features/restore/RestorePage';
 import { WelcomePage } from '../features/welcome/WelcomePage';
 import { SyncProvider } from '../sync/SyncProvider';
 import { useVault, VaultProvider } from '../vault/VaultProvider';
@@ -43,7 +44,7 @@ export interface ReturnState {
 
 /** Only the screens of the current vault state are reachable: first run, locked, or unlocked. */
 function GatedRoutes() {
-  const { status } = useVault();
+  const { status, recoveryHandoff } = useVault();
   const location = useLocation();
   if (status === 'loading') return null;
 
@@ -53,6 +54,7 @@ function GatedRoutes() {
         <Route path="/welcome" element={<WelcomePage />} />
         <Route path="/welcome/create" element={<CreateVaultPage />} />
         <Route path="/welcome/dropbox" element={<DropboxJoinPage />} />
+        <Route path="/restore" element={<RestorePage />} />
         <Route path="*" element={<Navigate to="/welcome" replace />} />
       </Routes>
     );
@@ -64,7 +66,7 @@ function GatedRoutes() {
       <Routes>
         <Route path="/unlock" element={<UnlockPage />} />
         <Route path="/recover" element={<RecoverPage />} />
-        <Route path="*" element={<Navigate to="/unlock" replace state={{ from } satisfies ReturnState} />} />
+        <Route path="*" element={recoveryHandoff ? <Navigate to="/recover" replace /> : <Navigate to="/unlock" replace state={{ from } satisfies ReturnState} />} />
       </Routes>
     );
   }
@@ -82,6 +84,7 @@ function GatedRoutes() {
       <Route path="/settings/password" element={<ChangePasswordPage />} />
       <Route path="/settings/recovery-key" element={<NewRecoveryKeyPage />} />
       <Route path="/import" element={<ImportPage />} />
+      <Route path="/restore" element={<RestorePage />} />
       <Route path="/welcome/done" element={<DonePage />} />
       {/* just unlocked / recovered / created: continue where the user was going */}
       <Route path="/unlock" element={<Navigate to={(location.state as ReturnState | null)?.from ?? '/'} replace />} />

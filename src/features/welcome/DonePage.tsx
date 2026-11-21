@@ -2,13 +2,15 @@ import { useNavigate } from 'react-router-dom';
 import { FormScreen, formStyles } from '../../components/form/Form';
 import { CheckIcon, ChevronRight, CloudIcon, DownloadIcon } from '../../components/icons';
 import { useSnackbar } from '../../components/Snackbar';
+import { useSync } from '../../sync/SyncProvider';
 import s from './Welcome.module.css';
 
 /** "Your vault is ready" with the next steps (brief 01). */
 export function DonePage() {
   const navigate = useNavigate();
   const snackbar = useSnackbar();
-  const later = (what: string) => snackbar.show({ message: `${what} arrives in the next version of PassMan.`, icon: 'info' });
+  const sync = useSync();
+  const connectDropbox = () => sync.connect().catch(() => snackbar.show({ message: 'PassMan couldn’t open the Dropbox sign-in', icon: 'info' }));
 
   return (
     <FormScreen title="" footer={<button type="button" className={formStyles.primary} onClick={() => navigate('/', { replace: true })}>Go to my logins</button>}>
@@ -20,7 +22,7 @@ export function DonePage() {
         </div>
         <div className={s.nextCard}>
           <div className={s.nextLabel}>Next steps</div>
-          <button type="button" className={s.nextRow} onClick={() => later('Dropbox sync')}>
+          <button type="button" className={s.nextRow} onClick={() => (sync.connection ? navigate('/settings') : void connectDropbox())}>
             <span className={s.nextIcon}><CloudIcon /></span>
             <span className={s.nextText}>
               <span className={`${s.nextTitle} ${s.nextTitleAccent}`}>Connect Dropbox to sync your devices</span>
@@ -29,7 +31,7 @@ export function DonePage() {
             <span className={s.chevron}><ChevronRight /></span>
           </button>
           <div className={s.divider} />
-          <button type="button" className={s.nextRow} onClick={() => later('Importing from Chrome')}>
+          <button type="button" className={s.nextRow} onClick={() => navigate('/import')}>
             <span className={s.nextIcon}><DownloadIcon /></span>
             <span className={s.nextText}>
               <span className={s.nextTitle}>Import your passwords from Chrome</span>

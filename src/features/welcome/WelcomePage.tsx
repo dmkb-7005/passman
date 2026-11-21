@@ -2,14 +2,11 @@ import { useNavigate } from 'react-router-dom';
 import { formStyles } from '../../components/form/Form';
 import { KeyIcon } from '../../components/icons';
 import { NightRidges } from '../../components/NightRidges';
-import { useSnackbar } from '../../components/Snackbar';
 import s from './Welcome.module.css';
 
 /** First run on a device (brief 01): create a vault, use the one in Dropbox, or restore a backup. */
 export function WelcomePage() {
   const navigate = useNavigate();
-  const snackbar = useSnackbar();
-  const later = (what: string) => snackbar.show({ message: `${what} arrives in the next version of PassMan.`, icon: 'info' });
 
   return (
     <div className={s.screen}>
@@ -28,7 +25,7 @@ export function WelcomePage() {
             <button type="button" className={formStyles.secondary} onClick={() => navigate('/welcome/dropbox')}>Use my vault from Dropbox</button>
             <div className={s.subline}>On your second or third device</div>
           </div>
-          <button type="button" className={formStyles.textLink} onClick={() => later('Restoring a backup file')}>Restore a backup file</button>
+          <button type="button" className={formStyles.textLink} onClick={() => navigate('/restore')}>Restore a backup file</button>
         </div>
       </div>
     </div>

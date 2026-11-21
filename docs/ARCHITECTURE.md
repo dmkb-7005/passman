@@ -14,7 +14,7 @@ Follows `docs/PLAYBOOK.md` except where §1 says otherwise.
 | Backup = plain JSON; optional CSV export | Backup = the **encrypted** vault file; **no CSV export** | Secrets never leave encrypted |
 | No import code in the app (one-off scripts in `tools/`) | **In-app Chrome CSV import** | Imported rows must go straight into the encrypted vault |
 | No extra crypto libraries | **`hash-wasm`** for Argon2id (bundled WASM, offline) | WebCrypto has no memory-hard KDF |
-| Restore = replace all from a plain file | Restore decrypts first, then replaces the vault locally and in Dropbox (new vault id) | See SCOPE §5.7 |
+| Restore = replace all from a plain file | Restore decrypts the backup, then sets the vault's logins to the backup's as one change (same vault id and keys; syncs normally) | See SCOPE §5.7 and §4.7 |
 | `registerType: 'prompt'` + starter `UpdateBanner` | **Custom service worker** (`injectManifest`) that keeps serving the **approved build** until the user confirms; update dialog with build metadata | A standard waiting service worker activates on its own once the app is closed (§5.1) |
 
 Everything else stays: Vite 6, React 19, TypeScript strict, HashRouter, Dexie 4, Zod 4, Vitest, `vite-plugin-pwa` with prompt-based updates, CSS Modules + the shared design system, GitHub Pages + Actions.
@@ -82,8 +82,8 @@ src/
   db/                 Dexie: `vault` (encrypted file) and `meta` (settings, device state)
   app/                App.tsx (routes behind the vault gate), TabLayout (bottom bar / laptop rail),
                       UpdateProvider + UpdateDialog, clipboard.ts (copy + 30 s clearing), format.ts (dates)
-  backup/             (backup milestone) export/share, restore
-  features/           import (Chrome import flow), welcome (welcome, create, done, join from Dropbox), unlock (unlock, recover), logins (list, detail, edit,
+  backup/             backupFile.ts: file name, read/validate a backup, save (share sheet or download)
+  features/           restore (restore flow), import (Chrome import flow), welcome (welcome, create, done, join from Dropbox), unlock (unlock, recover), logins (list, detail, edit,
                       generator sheet, sync chip), generator (tab + useGenerator), settings (+ password,
                       recovery key), shared tab-screen styles
   components/         icons, NightRidges, BottomSheet, Snackbar, form/ (fields, messages, dialogs,
@@ -134,6 +134,11 @@ PKCE with `token_access_type=offline`; the App key is public (no app secret exis
 
 ### 4.5 Import
 Parse CSV in memory (handles BOM, CRLF, quoted commas, line breaks inside quotes; max 5 MB) → map columns by header name → find duplicates against the vault and within the file (`domain/importPlan.ts`) → review screen (`features/import/ImportPage.tsx`) → `VaultProvider.importLogins` applies the decisions in one write (one save, one sync). The file contents are never stored: leaving the screen or auto-lock drops them. "Use imported" on an in-file duplicate overwrites the login created from the earlier row; on a vault duplicate it updates that login (new `updatedAt`, so it wins the merge on other devices).
+
+### 4.7 Backup and restore
+- **Export:** the stored vault file as JSON, `passman-backup-YYYY-MM-DD.json.txt` (`.txt` so Android can share and open it). Web Share API with a file where supported (Android share sheet), else a download. `meta.lastBackupAt` is set when the share or download succeeded.
+- **Restore into an existing vault:** parse with Zod → same `vaultId`: decrypt with the open session (no password) · other vault: open with its master password or recovery key → `domain/restore.ts` computes the target: every login of the backup gets a fresh `updatedAt` (so it wins the merge on every device), every current login not in the backup becomes a tombstone. Before writing, the current vault file is downloaded as `passman-before-restore-YYYY-MM-DD.json.txt`. One write, one sync.
+- **Restore on Welcome:** the backup file is opened with its password or recovery key and stored as this device's vault (`adoptVault`), like joining from Dropbox.
 
 ### 4.6 Auto-lock
 Pointer, key and scroll events update `lastActivity`. `visibilitychange` records when the app went to the background; on return, the elapsed time decides. The decision is computed from timestamps (`domain/autolock.ts`), because timers are throttled in the background.

@@ -104,7 +104,9 @@ App shortcut (long-press on the icon): **Add login** → `./#/logins/new` (unloc
 ### 5.7 Backup and restore
 - **Export backup** shares or downloads `passman-backup-YYYY-MM-DD.json.txt`. It is the same encrypted file as in Dropbox and opens with the master password or the recovery key that were current at export time.
 - Settings shows the last backup date (same rules as the playbook; reminder default 30 days).
-- **Restore** (from Welcome or Settings): pick the file → enter its master password or recovery key → summary → red **Replace all logins**. A copy of the current encrypted vault is downloaded first. If Dropbox is connected, the restored vault replaces the Dropbox vault too, and the other devices are asked to load it again with its password.
+- **Restore from Settings** (device with a vault): pick the file → (only if the backup belongs to another vault: enter its master password or recovery key) → summary of what changes → red **Replace all logins**. The vault's logins become exactly the backup's: logins added since are deleted, deleted ones come back, edited ones go back to the backup's version. It is one ordinary change, so it syncs to the other devices without any prompt. The master password, recovery key and Dropbox connection stay as they are. A copy of the current encrypted vault is saved first (`passman-before-restore-YYYY-MM-DD.json.txt`).
+- **Restore from Welcome** (new device): pick the file → its master password or recovery key → the backup becomes this device's vault.
+- Decided 2026-11-21 (replaces the earlier "new vault id, other devices load it again with its password").
 
 ### 5.8 Updates
 - **An update is never applied without confirmation**: not when the page reloads, and not when the app is closed and reopened. PassMan keeps running the version you last approved.
@@ -129,7 +131,7 @@ App shortcut (long-press on the icon): **Add login** → `./#/logins/new` (unloc
 - **v0.3.0 (vault screens):** create vault with recovery key (and print sheet), unlock, recover, auto-lock, logins list with search, detail, add/edit/delete with Undo, generator (tab and sheet), Settings with auto-lock times, change master password, new recovery key, storage and version. Laptop layout with a left rail from 900 px.
 - **v0.4.0 (Dropbox sync):** connect in Settings, use the vault from Dropbox on a second device (Welcome), automatic sync with merge, sync chip and Settings card states, Sync now, Disconnect, sync problem sheet with Reconnect / Try again, "Dropbox already has a vault" choice.
 - **v0.5.0 (Chrome import):** Settings › Import from Chrome: choose the CSV, summary (new / possible duplicates / skipped, ignored notes), duplicates review (Keep existing · Use imported · Keep both, same-password duplicates pre-set to Keep existing, Apply to all remaining, undecided cards listed first), import in one save, "Delete the file now" reminder. No export instructions in the app.
-- **Not yet:** backup export/restore. Its buttons are in place as designed and say "arrives in the next version of PassMan".
+- **v0.6.0 (backup and restore):** Export backup (share sheet on Android, download on the laptop; last backup date and reminder in Settings), Restore from Settings (backup of this vault opens without a password; another vault's backup needs its master password or recovery key; summary of what changes; safety copy first) and from Welcome (password, or recovery key → new master password). All features of SCOPE §2 are now built.
 
 ## 8. Decisions
 - Approved 2026-11-20, including the defaults above (5 min idle / 1 min in background, 12-character minimum).

@@ -95,3 +95,5 @@
 .problemCard { background: var(--danger-bg); border: 1.5px solid var(--danger-border); border-radius: 20px; }
 .problemText { margin: 0; font-size: 14px; line-height: 20px; color: var(--text); }
 .problemText b { font-weight: 600; }
+.circleOk { color: var(--positive); background: var(--positive-bg); }
+.hintStrong { font-weight: 600; color: var(--text-2); }

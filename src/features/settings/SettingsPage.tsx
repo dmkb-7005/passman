@@ -27,6 +27,8 @@ import { useSnackbar, useSnackbarPlacement } from '../../components/Snackbar';
 import { updateSettings, useMeta, useSettings } from '../../db/meta';
 import { backupStatus, daysAgo } from '../../domain/backupStatus';
 import { useVault } from '../../vault/VaultProvider';
+import { backupFileName, encodeBackup, saveFile } from '../../backup/backupFile';
+import { db } from '../../db/db';
 import { DropboxCard } from './DropboxCard';
 import t from '../shared/TabScreen.module.css';
 import s from './Settings.module.css';
@@ -77,7 +79,7 @@ function OptionSheet<T extends number>({ title, intro, options, label, value, on
   );
 }
 
-/** Settings (brief 07). Backup arrives in a later milestone; its rows say so. */
+/** Settings (brief 07; backup card brief 10). */
 export function SettingsPage() {
   const navigate = useNavigate();
   const vault = useVault();
@@ -85,6 +87,24 @@ export function SettingsPage() {
   const updates = useUpdates();
   const settings = useSettings();
   const lastBackupAt = useMeta<string>('lastBackupAt');
+  const [exporting, setExporting] = useState(false);
+
+  async function exportBackup() {
+    const current = vault.sync.current();
+    if (!current || exporting) return;
+    setExporting(true);
+    try {
+      const now = new Date();
+      const outcome = await saveFile(backupFileName(now), encodeBackup(current.file));
+      if (outcome === 'cancelled') return;
+      await db.meta.put({ key: 'lastBackupAt', value: now.toISOString() });
+      snackbar.show({ message: 'Backup saved · Opens with your current master password or recovery key' });
+    } catch {
+      snackbar.show({ message: 'PassMan couldn’t save the backup', icon: 'info' });
+    } finally {
+      setExporting(false);
+    }
+  }
   const [persisted, setPersisted] = useState<boolean | null>(null);
   const [checking, setChecking] = useState(false);
   const [sheet, setSheet] = useState<'idle' | 'background' | null>(null);
@@ -95,7 +115,6 @@ export function SettingsPage() {
     void navigator.storage?.persisted?.().then(setPersisted, () => setPersisted(null));
   }, []);
 
-  const later = (what: string) => snackbar.show({ message: `${what} arrives in the next version of PassMan.`, icon: 'info' });
 
   async function requestPersistence() {
     const granted = (await navigator.storage?.persist?.().catch(() => false)) ?? false;
@@ -132,7 +151,7 @@ export function SettingsPage() {
               ) : backup.state === 'overdue' ? (
                 <span className={`${s.circle} ${s.circleWarn}`}><WarnIcon size={20} /></span>
               ) : (
-                <span className={s.circle}><ArchiveIcon /></span>
+                <span className={`${s.circle} ${s.circleOk}`}><ArchiveIcon /></span>
               )}
               <div className={s.cardTitles}>
                 {backup.state === 'never' ? (
@@ -143,16 +162,16 @@ export function SettingsPage() {
                 ) : (
                   <>
                     <span className={`${s.cardTitle} ${backup.state === 'overdue' ? s.warn : ''}`}>{backup.state === 'overdue' ? `Backup overdue · ${daysAgo(backup.days)}` : `Last backup ${daysAgo(backup.days)}`}</span>
-                    <span className={s.cardSub}>{lastBackupAt ? displayDateTime(lastBackupAt, false) : ''}</span>
+                    <span className={s.cardSub}>{lastBackupAt ? displayDateTime(lastBackupAt) : ''}</span>
                   </>
                 )}
               </div>
             </div>
             <div className={s.buttons}>
-              <button type="button" className={formStyles.primary} onClick={() => later('Exporting a backup')}>Export backup</button>
-              <button type="button" className={formStyles.secondary} onClick={() => later('Restoring a backup')}><RestoreIcon />Restore from backup</button>
+              <button type="button" className={formStyles.primary} disabled={exporting} onClick={() => void exportBackup()}>Export backup</button>
+              <button type="button" className={formStyles.secondary} onClick={() => navigate('/restore')}><RestoreIcon />Restore from backup</button>
             </div>
-            <p className={s.hint}>The backup file is encrypted. It opens with your master password or recovery key.</p>
+            <p className={s.hint}>The backup file is encrypted. It opens with the master password or recovery key <b className={s.hintStrong}>that are current when you save it</b>.</p>
           </div>
         </Section>
 

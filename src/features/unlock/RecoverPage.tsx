@@ -1,5 +1,5 @@
 import { useEffect, useId, useRef, useState, type FormEvent } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import { FieldMessage, FormScreen, formStyles, PasswordField, RequirementLine, StepIndicator } from '../../components/form/Form';
 import { CheckIcon } from '../../components/icons';
 import { useSnackbar } from '../../components/Snackbar';
@@ -28,8 +28,10 @@ export function RecoverPage() {
   const navigate = useNavigate();
   const snackbar = useSnackbar();
   const id = useId();
-  const [step, setStep] = useState<1 | 2>(1);
-  const [key, setKey] = useState('');
+  // restoring a backup on Welcome with its recovery key: the key is already checked, go straight to the new password
+  const given = vault.recoveryHandoff?.recoveryKey ?? (useLocation().state as { recoveryKey?: string } | null)?.recoveryKey;
+  const [step, setStep] = useState<1 | 2>(given ? 2 : 1);
+  const [key, setKey] = useState(given ?? '');
   const [problem, setProblem] = useState<KeyProblem>(null);
   const [busy, setBusy] = useState(false);
   const [password, setPassword] = useState('');
@@ -39,6 +41,10 @@ export function RecoverPage() {
   useEffect(() => {
     if (step === 1) keyField.current?.focus();
   }, [step]);
+
+  // taken over from installVault: from now on "back" leads to Unlock as usual
+  const { clearRecoveryHandoff } = vault;
+  useEffect(() => clearRecoveryHandoff(), [clearRecoveryHandoff]);
 
   const complete = key.replace(/-/g, '').length === 32;
 

@@ -100,7 +100,7 @@ export function DropboxJoinPage() {
 
   async function openRecovery() {
     if (view.kind !== 'found') return;
-    await vault.installVault(view.file);
+    await vault.installVault(view.file, {});
     sync.connectWhenUnlocked({ tokens: view.tokens, email: view.email, base: { rev: view.meta.rev, version: fileVersion(view.file) } });
     navigate('/recover', { replace: true });
   }

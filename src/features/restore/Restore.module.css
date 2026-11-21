@@ -1,0 +1,40 @@
+/* Restore from backup (brief 10) */
+.num { font-family: var(--font-num); font-variant-numeric: tabular-nums; }
+.hiddenInput { display: none; }
+.iconButton { display: inline-flex; align-items: center; justify-content: center; gap: 10px; }
+.warn { color: var(--warn); }
+
+.titleBlock { display: flex; flex-direction: column; gap: 6px; }
+.fileLine { display: flex; align-items: center; gap: 6px; min-width: 0; font-size: 14px; line-height: 20px; color: var(--muted); }
+.fileLine svg { flex: none; }
+.fileName { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.switchLink { align-self: flex-start; min-height: 40px; padding: 0; font-family: var(--font-ui); font-size: 14px; font-weight: 500; color: var(--text-2); text-decoration: underline; text-underline-offset: 3px; background: none; border: 0; }
+
+.facts { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; }
+.fact { min-width: 0; display: flex; flex-direction: column; gap: 2px; padding: 12px; background: var(--bg); border-radius: 14px; }
+.factLabel { font-size: 13px; line-height: 18px; font-weight: 500; color: var(--muted); }
+.factMain { font-size: 15px; line-height: 22px; }
+.factNum { font-family: var(--font-num); font-weight: 600; font-size: 18px; font-variant-numeric: tabular-nums; }
+.factSub { font-size: 13px; line-height: 18px; color: var(--text-2); }
+.sectionLabel { margin-top: 4px; padding: 0 4px; font-size: 12px; line-height: 16px; font-weight: 600; letter-spacing: 0.6px; text-transform: uppercase; color: var(--muted); }
+.changes { margin: -8px 0 0; padding: 0; list-style: none; border-radius: 16px; overflow: hidden; }
+.changes li { display: flex; align-items: center; gap: 12px; min-height: 56px; padding: 10px 14px; font-size: 14px; line-height: 20px; color: var(--text-2); }
+.changes li + li { border-top: 1px solid var(--border); }
+.changes li > svg { flex: none; color: var(--text-2); }
+.changes .num { font-weight: 600; font-size: 15px; color: var(--text); }
+.syncLine { display: flex; align-items: flex-start; gap: 8px; padding: 0 2px; font-size: 13px; line-height: 18px; color: var(--muted); }
+.syncLine svg { flex: none; margin-top: 1px; }
+
+.footerStack { display: flex; flex-direction: column; align-items: stretch; gap: 4px; }
+.dangerPrimary { color: #2a0e12; background: var(--danger); }
+.cancel { height: 48px; font-family: var(--font-ui); font-size: 15px; font-weight: 600; color: var(--text-2); background: transparent; border: 0; }
+
+.hero { display: flex; flex-direction: column; align-items: center; gap: 10px; padding: 8px 0 4px; text-align: center; }
+.heroCircle { width: 72px; height: 72px; display: flex; align-items: center; justify-content: center; color: var(--positive); background: var(--positive-bg); border-radius: 36px; }
+.heroTitle { margin: 0; font-size: 24px; line-height: 32px; font-weight: 600; }
+.heroText { margin: 0; font-size: 14px; line-height: 20px; color: var(--text-2); }
+.copyCard { display: flex; gap: 10px; padding: 14px; border-radius: 16px; }
+.copyCard > svg { flex: none; margin-top: 1px; color: var(--text-2); }
+.copyText { min-width: 0; display: flex; flex-direction: column; gap: 2px; font-size: 14px; line-height: 20px; color: var(--text-2); }
+.copyName { font-family: var(--font-num); font-size: 13px; font-weight: 600; color: var(--text); word-break: break-all; }
+.copyHint { font-size: 13px; line-height: 18px; color: var(--muted); }

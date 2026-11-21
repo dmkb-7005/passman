@@ -5,6 +5,7 @@ import {
   changePassword as rekeyPassword,
   createVault,
   decryptSecret,
+  decryptWithSession,
   encryptSecret,
   openWithPassword,
   openWithRecoveryKey,
@@ -32,6 +33,7 @@ import {
   type Login,
   type LoginInput,
 } from '../domain/logins';
+import { applyRestore } from '../domain/restore';
 import { applyImport, type Decision, type ImportPlan, type ImportResult } from '../domain/importPlan';
 import { fileVersion, integrateRemote } from '../sync/syncEngine';
 
@@ -74,10 +76,20 @@ interface VaultApi {
   commitRecoveryKey: (file: VaultFile) => Promise<void>;
   /** Chrome import (brief 09): applies the reviewed plan in one save. */
   importLogins: (plan: ImportPlan, decisions: ReadonlyMap<number, Decision>) => Promise<ImportResult>;
+  /** A backup of this vault opens with the open session (no password): its entries. Null for another vault. */
+  openOwnBackup: (file: VaultFile) => Promise<Entry[] | null>;
+  /** Restore (brief 10): the logins become exactly the backup's, as one change. */
+  restoreLogins: (backup: readonly Entry[]) => Promise<void>;
   /** Join from Dropbox: opens the downloaded vault with its master password and makes it this device's vault. */
   adoptVault: (file: VaultFile, password: string) => Promise<void>;
-  /** Join from Dropbox with the recovery key: stores the downloaded vault (locked) for the Recover flow. */
-  installVault: (file: VaultFile) => Promise<void>;
+  /**
+   * Stores a vault file (locked) and continues in the Recover flow: "Forgot it?" when joining from Dropbox, or
+   * restoring a backup on Welcome with its recovery key (already checked, so Recover skips to the new password).
+   */
+  installVault: (file: VaultFile, recovery?: { recoveryKey?: string }) => Promise<void>;
+  /** set by installVault until the Recover screen has taken it over */
+  recoveryHandoff: { recoveryKey?: string } | null;
+  clearRecoveryHandoff: () => void;
   /** fileVersion() of the stored vault while unlocked; changes with every save */
   fileVersion: string | null;
   /** for the Dropbox sync (src/sync/SyncProvider.tsx); every write goes through the vault's queue */
@@ -115,6 +127,7 @@ async function writeFile(file: VaultFile): Promise<void> {
 
 export function VaultProvider({ children }: { children: ReactNode }) {
   const [status, setStatus] = useState<VaultStatus>('loading');
+  const [handoff, setHandoff] = useState<{ recoveryKey?: string } | null>(null);
   const [lockInfo, setLockInfo] = useState<LockInfo>(null);
   const [entries, setEntries] = useState<Entry[]>([]);
   const [version, setVersion] = useState<string | null>(null);
@@ -263,18 +276,27 @@ export function VaultProvider({ children }: { children: ReactNode }) {
           const result = applyImport(list, plan, decisions, new Date());
           return { list: result.entries, result };
         }),
+      openOwnBackup: async (file) => {
+        const s = session.current;
+        if (!s || file.vaultId !== s.vaultId) return null;
+        return (await decryptWithSession(s, file)).payload.logins;
+      },
+      restoreLogins: (backup) => mutate((list) => ({ list: applyRestore(list, backup, new Date()), result: undefined })),
       adoptVault: (file, password) =>
         serial(async () => {
           const opened = await openWithPassword(file, password, derive);
           await writeFile(opened.session.file);
           open(opened.session, opened.payload.logins);
         }),
-      installVault: (file) =>
+      installVault: (file, recovery = {}) =>
         serial(async () => {
           if (session.current || (await readFile())) throw new Error('This device already has a vault');
           await writeFile(file);
+          setHandoff(recovery);
           setStatus('locked');
         }),
+      recoveryHandoff: handoff,
+      clearRecoveryHandoff: () => setHandoff(null),
       fileVersion: version,
       sync: {
         current: () => {
@@ -315,7 +337,7 @@ export function VaultProvider({ children }: { children: ReactNode }) {
         },
       },
     };
-  }, [status, lockInfo, entries, version, open, lock, mutate, serial, setFile]);
+  }, [status, lockInfo, entries, version, handoff, open, lock, mutate, serial, setFile]);
 
   useAutoLock(status === 'unlocked', lock);
 

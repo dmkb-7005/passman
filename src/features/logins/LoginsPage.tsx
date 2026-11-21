@@ -95,7 +95,6 @@ function LoginGroup({ logins, query = '' }: { logins: Login[]; query?: string })
 export function LoginsPage() {
   const vault = useVault();
   const navigate = useNavigate();
-  const snackbar = useSnackbar();
   const [query, setQuery] = useState('');
   const search = useRef<HTMLInputElement>(null);
   useSnackbarPlacement(NAV_HEIGHT + 12);
@@ -136,7 +135,7 @@ export function LoginsPage() {
             </div>
             <div className={s.emptyActions}>
               <button type="button" className={formStyles.primary} onClick={() => navigate('/logins/new')}>Add your first login</button>
-              <button type="button" className={formStyles.secondary} onClick={() => snackbar.show({ message: 'Importing from Chrome arrives in the next version of PassMan.', icon: 'info' })}>
+              <button type="button" className={formStyles.secondary} onClick={() => navigate('/import')}>
                 <DownloadIcon />Import from Chrome
               </button>
             </div>

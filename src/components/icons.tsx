@@ -125,3 +125,11 @@ export const DeviceIcon = ({ size = 18, ...r }: P) => (
 export const NotEqualIcon = ({ size = 14, ...r }: P) => (
   <svg {...base(size, r)}><path d="M5 9h14M5 15h14M15.5 5l-7 14" /></svg>
 );
+
+// restore (brief 10)
+export const MinusCircleIcon = ({ size = 20, ...r }: P) => (
+  <svg {...base(size, r)}><circle cx="12" cy="12" r="9" /><path d="M8 12h8" /></svg>
+);
+export const EditIcon = ({ size = 20, ...r }: P) => (
+  <svg {...base(size, r)}><path d="M4 20h4L19 9a2.8 2.8 0 0 0-4-4L4 16z" /><path d="M13.5 6.5l4 4" /></svg>
+);
