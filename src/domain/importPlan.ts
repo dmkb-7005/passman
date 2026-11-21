@@ -109,3 +109,13 @@ export function applyImport(
   }
   return { entries: [...entries.values()], added, replaced, skipped };
 }
+
+/** Logins the import will write (new + replaced + kept both): the "Import 172 logins" label. */
+export function importCount(plan: ImportPlan, decisions: ReadonlyMap<number, Decision>): number {
+  let n = plan.fresh.length;
+  for (const item of plan.duplicates) {
+    const d = decisions.get(item.row.row);
+    if (d === 'use-imported' || d === 'keep-both') n++;
+  }
+  return n;
+}

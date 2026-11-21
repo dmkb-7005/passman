@@ -114,3 +114,14 @@ export const StorageIcon = ({ size = 22, ...r }: P) => (
     <path d="M4 7c0-1.7 3.6-3 8-3s8 1.3 8 3-3.6 3-8 3-8-1.3-8-3z" /><path d="M4 7v10c0 1.7 3.6 3 8 3s8-1.3 8-3V7" /><path d="M4 12c0 1.7 3.6 3 8 3s8-1.3 8-3" />
   </svg>
 );
+
+// import (brief 09)
+export const FileIcon = ({ size = 20, ...r }: P) => (
+  <svg {...base(size, r)}><path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8z" /><path d="M14 3v5h5" /></svg>
+);
+export const DeviceIcon = ({ size = 18, ...r }: P) => (
+  <svg {...base(size, r)}><rect x="7" y="2.5" width="10" height="19" rx="2" /><path d="M11 18.5h2" /></svg>
+);
+export const NotEqualIcon = ({ size = 14, ...r }: P) => (
+  <svg {...base(size, r)}><path d="M5 9h14M5 15h14M15.5 5l-7 14" /></svg>
+);

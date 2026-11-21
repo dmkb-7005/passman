@@ -12,6 +12,7 @@ import { UnlockPage } from '../features/unlock/UnlockPage';
 import { CreateVaultPage } from '../features/welcome/CreateVaultPage';
 import { DonePage } from '../features/welcome/DonePage';
 import { DropboxJoinPage } from '../features/welcome/DropboxJoinPage';
+import { ImportPage } from '../features/import/ImportPage';
 import { WelcomePage } from '../features/welcome/WelcomePage';
 import { SyncProvider } from '../sync/SyncProvider';
 import { useVault, VaultProvider } from '../vault/VaultProvider';
@@ -80,6 +81,7 @@ function GatedRoutes() {
       <Route path="/logins/:id/edit" element={<LoginEditPage />} />
       <Route path="/settings/password" element={<ChangePasswordPage />} />
       <Route path="/settings/recovery-key" element={<NewRecoveryKeyPage />} />
+      <Route path="/import" element={<ImportPage />} />
       <Route path="/welcome/done" element={<DonePage />} />
       {/* just unlocked / recovered / created: continue where the user was going */}
       <Route path="/unlock" element={<Navigate to={(location.state as ReturnState | null)?.from ?? '/'} replace />} />

@@ -1,5 +1,5 @@
 import { useEffect, useState, type ReactNode } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { BUILD_INFO, buildLinks, shortCommit } from '../../app/buildInfo';
 import { displayDateTime } from '../../app/format';
 import { NAV_HEIGHT } from '../../app/TabLayout';
@@ -77,8 +77,9 @@ function OptionSheet<T extends number>({ title, intro, options, label, value, on
   );
 }
 
-/** Settings (brief 07). Backup and import arrive in later milestones; their rows say so. */
+/** Settings (brief 07). Backup arrives in a later milestone; its rows say so. */
 export function SettingsPage() {
+  const navigate = useNavigate();
   const vault = useVault();
   const snackbar = useSnackbar();
   const updates = useUpdates();
@@ -157,7 +158,7 @@ export function SettingsPage() {
 
         <Section label="Import">
           <div className={`${t.glass} ${s.group}`}>
-            <Row icon={<DownloadIcon size={22} />} label="Import from Chrome" sub="From Chrome’s password export file" onClick={() => later('Importing from Chrome')} />
+            <Row icon={<DownloadIcon size={22} />} label="Import from Chrome" sub="From Chrome’s password export file" onClick={() => navigate('/import')} />
           </div>
         </Section>
 

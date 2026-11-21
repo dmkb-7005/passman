@@ -1,5 +1,5 @@
 import { parseCsv, readChromeCsv, type ImportRow } from './chromeCsv';
-import { applyImport, defaultDecision, planImport, type Decision } from './importPlan';
+import { applyImport, defaultDecision, importCount, planImport, type Decision } from './importPlan';
 import { isLogin, type Entry, type Login } from './logins';
 
 describe('parseCsv', () => {
@@ -89,6 +89,17 @@ describe('import plan', () => {
     expect(logins.find((l) => l.id === 'v1')).toMatchObject({ password: 'new', createdAt: existing.createdAt, updatedAt: now.toISOString() });
     expect(logins.find((l) => l.id === 'new-1')).toMatchObject({ name: 'bank', password: 'newer' });
     expect(logins.find((l) => l.id === 'new-2')).toMatchObject({ password: 'third' });
+  });
+
+  it('counts the logins an import writes, as the Import button and the done screen show them', () => {
+    const rows = [row(1), row(2, { username: 'x', url: '', name: 'Bank' }), row(3, { username: 'x', url: '', name: 'bank', password: 'newer' }), row(4, { password: 'third' }), row(5, { name: 'Zoo', url: 'https://zoo.example', username: 'z' })];
+    const plan = planImport([existing], rows);
+    const decisions = new Map<number, Decision>([[1, 'use-imported'], [3, 'keep-existing'], [4, 'keep-both']]);
+    expect(importCount(plan, decisions)).toBe(4);
+    const result = applyImport([existing], plan, decisions, now, newId);
+    expect(result.added + result.replaced).toBe(4);
+    expect(result.skipped).toBe(1);
+    expect(importCount(plan, new Map())).toBe(plan.fresh.length);
   });
 
   it('keep existing leaves the vault untouched', () => {

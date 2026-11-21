@@ -83,7 +83,7 @@ src/
   app/                App.tsx (routes behind the vault gate), TabLayout (bottom bar / laptop rail),
                       UpdateProvider + UpdateDialog, clipboard.ts (copy + 30 s clearing), format.ts (dates)
   backup/             (backup milestone) export/share, restore
-  features/           welcome (welcome, create, done), unlock (unlock, recover), logins (list, detail, edit,
+  features/           import (Chrome import flow), welcome (welcome, create, done, join from Dropbox), unlock (unlock, recover), logins (list, detail, edit,
                       generator sheet, sync chip), generator (tab + useGenerator), settings (+ password,
                       recovery key), shared tab-screen styles
   components/         icons, NightRidges, BottomSheet, Snackbar, form/ (fields, messages, dialogs,
@@ -133,7 +133,7 @@ success → lastSyncedRev = new rev, syncedVersion = the local file's version, l
 PKCE with `token_access_type=offline`; the App key is public (no app secret exists in PassMan). Redirect URI = the app's base URL (`https://dmkb-7005.github.io/passman/`, plus `http://localhost:4173/passman/` for local tests). The verifier, state and return route live in `localStorage` during the round trip (max. 30 min). `main.tsx` takes `?code&state` out of the address before the router starts and restores the route; the code is exchanged right away. Because the app comes back **locked**, the tokens wait in memory until the vault is unlocked, then the refresh token is encrypted with the DEK and stored. From Welcome (second device), the vault is downloaded first and opened with its master password (or recovery key), then the connection is stored.
 
 ### 4.5 Import
-Parse CSV in memory (handles BOM, CRLF, quoted commas, line breaks inside quotes) → map columns → find duplicates against the vault and within the file → review screen → apply as normal changes (one save, one sync). The file contents are never stored.
+Parse CSV in memory (handles BOM, CRLF, quoted commas, line breaks inside quotes; max 5 MB) → map columns by header name → find duplicates against the vault and within the file (`domain/importPlan.ts`) → review screen (`features/import/ImportPage.tsx`) → `VaultProvider.importLogins` applies the decisions in one write (one save, one sync). The file contents are never stored: leaving the screen or auto-lock drops them. "Use imported" on an in-file duplicate overwrites the login created from the earlier row; on a vault duplicate it updates that login (new `updatedAt`, so it wins the merge on other devices).
 
 ### 4.6 Auto-lock
 Pointer, key and scroll events update `lastActivity`. `visibilitychange` records when the app went to the background; on return, the elapsed time decides. The decision is computed from timestamps (`domain/autolock.ts`), because timers are throttled in the background.

@@ -32,6 +32,7 @@ import {
   type Login,
   type LoginInput,
 } from '../domain/logins';
+import { applyImport, type Decision, type ImportPlan, type ImportResult } from '../domain/importPlan';
 import { fileVersion, integrateRemote } from '../sync/syncEngine';
 
 /*
@@ -71,6 +72,8 @@ interface VaultApi {
   /** Settings › New recovery key: nothing changes until commitRecoveryKey. */
   prepareRecoveryKey: (password: string) => Promise<{ file: VaultFile; recoveryKey: string; createdAt: Date }>;
   commitRecoveryKey: (file: VaultFile) => Promise<void>;
+  /** Chrome import (brief 09): applies the reviewed plan in one save. */
+  importLogins: (plan: ImportPlan, decisions: ReadonlyMap<number, Decision>) => Promise<ImportResult>;
   /** Join from Dropbox: opens the downloaded vault with its master password and makes it this device's vault. */
   adoptVault: (file: VaultFile, password: string) => Promise<void>;
   /** Join from Dropbox with the recovery key: stores the downloaded vault (locked) for the Recover flow. */
@@ -254,6 +257,11 @@ export function VaultProvider({ children }: { children: ReactNode }) {
           const merged: VaultFile = { ...s.file, keyset: file.keyset };
           await writeFile(merged);
           setFile(s, merged);
+        }),
+      importLogins: (plan, decisions) =>
+        mutate((list) => {
+          const result = applyImport(list, plan, decisions, new Date());
+          return { list: result.entries, result };
         }),
       adoptVault: (file, password) =>
         serial(async () => {
