@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useRef, useState } from 'react';
+import { useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { copyPlain, copySecret } from '../../app/clipboard';
 import { NAV_HEIGHT } from '../../app/TabLayout';
@@ -8,6 +8,7 @@ import { useSnackbar, useSnackbarPlacement } from '../../components/Snackbar';
 import { fold, hostOf, searchLogins, type Login } from '../../domain/logins';
 import { useVault } from '../../vault/VaultProvider';
 import t from '../shared/TabScreen.module.css';
+import { listMemory } from './listMemory';
 import s from './Logins.module.css';
 import { SyncChip } from './SyncChip';
 
@@ -95,7 +96,13 @@ function LoginGroup({ logins, query = '' }: { logins: Login[]; query?: string })
 export function LoginsPage() {
   const vault = useVault();
   const navigate = useNavigate();
-  const [query, setQuery] = useState('');
+  const [query, setQueryState] = useState(() => listMemory.query);
+  const list = useRef<HTMLDivElement>(null);
+  const setQuery = (q: string) => {
+    listMemory.setQuery(q);
+    setQueryState(q);
+    if (list.current) list.current.scrollTop = 0;
+  };
   const search = useRef<HTMLInputElement>(null);
   useSnackbarPlacement(NAV_HEIGHT + 12);
 
@@ -116,6 +123,11 @@ export function LoginsPage() {
   const results = useMemo(() => (query.trim() ? searchLogins(logins, query) : null), [logins, query]);
   const groups = useMemo(() => groupLogins(logins), [logins]);
   const empty = logins.length === 0;
+
+  // back from a login: the list opens where it was
+  useLayoutEffect(() => {
+    if (list.current) list.current.scrollTop = listMemory.scrollTop;
+  }, []);
 
   return (
     <div className={t.screen}>
@@ -170,7 +182,7 @@ export function LoginsPage() {
               )}
             </div>
           </div>
-          <div className={`${t.scroll} ${s.list}`}>
+          <div ref={list} className={`${t.scroll} ${s.list}`} onScroll={(e) => listMemory.setScrollTop(e.currentTarget.scrollTop)}>
             {results ? (
               results.length ? (
                 <>

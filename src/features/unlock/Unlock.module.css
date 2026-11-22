@@ -2,12 +2,16 @@
   position: relative;
   display: flex;
   flex-direction: column;
-  height: 100dvh;
+  height: 100dvh; /* shrinks with the keyboard (viewport interactive-widget=resizes-content) */
   max-width: 560px;
   margin: 0 auto;
-  padding: calc(96px + env(safe-area-inset-top, 0px)) 24px 0;
+  padding-top: env(safe-area-inset-top, 0px);
 }
-.form { position: relative; z-index: 1; display: flex; flex-direction: column; }
+.form { position: relative; z-index: 1; flex: 1; min-height: 0; display: flex; flex-direction: column; }
+/* logo + field; the space above shrinks with the visible height, so the field moves up when the keyboard opens */
+.top { flex: 1; min-height: 0; overflow-y: auto; padding: clamp(16px, 11dvh, 96px) 24px 16px; }
+.dock { flex: none; display: flex; flex-direction: column; gap: 4px; padding: 8px 24px calc(16px + env(safe-area-inset-bottom, 0px)); }
+
 .hero { display: flex; flex-direction: column; align-items: center; gap: 12px; text-align: center; }
 .mark {
   width: 64px;
@@ -23,13 +27,23 @@
 .name { margin: 0; font-size: 26px; line-height: 32px; font-weight: 600; letter-spacing: -0.3px; }
 .status { height: 20px; display: flex; align-items: center; justify-content: center; gap: 6px; font-size: 14px; line-height: 20px; color: var(--muted); }
 .fields { display: flex; flex-direction: column; gap: 8px; margin-top: 32px; }
-.button { margin-top: 8px; }
 .enterHint { display: none; margin-top: 8px; text-align: center; font-size: 13px; line-height: 18px; color: var(--muted); }
 
+@media (max-height: 560px) {
+  /* keyboard open: a smaller logo keeps the field in view */
+  .hero { flex-direction: row; justify-content: center; gap: 10px; }
+  .mark { width: 40px; height: 40px; border-radius: 12px; }
+  .mark svg { width: 20px; height: 20px; }
+  .name { font-size: 20px; line-height: 26px; }
+  .status { display: none; }
+  .fields { margin-top: 20px; }
+}
 /* laptop: the column is centred both ways */
 @media (min-width: 900px) {
   .screen { max-width: none; align-items: center; justify-content: center; padding: 24px; }
-  .form { width: 100%; max-width: 560px; padding: 0 16px 64px; }
+  .form { flex: none; width: 100%; max-width: 560px; padding: 0 16px 64px; }
+  .top { flex: none; overflow: visible; padding: 0; }
+  .dock { gap: 0; padding: 8px 0 0; }
   .enterHint { display: block; }
 }
 

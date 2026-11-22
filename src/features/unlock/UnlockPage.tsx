@@ -47,33 +47,36 @@ export function UnlockPage() {
     <div className={s.screen}>
       <NightRidges />
       <form className={s.form} onSubmit={(e) => void submit(e)}>
-        <div className={s.hero}>
-          <div role="img" aria-label="PassMan" className={s.mark}><KeyIcon size={30} /></div>
-          <h1 className={s.name}>PassMan</h1>
-          <div className={s.status}>{status && <><LockIcon size={14} /><span>{status}</span></>}</div>
+        <div className={s.top}>
+          <div className={s.hero}>
+            <div role="img" aria-label="PassMan" className={s.mark}><KeyIcon size={30} /></div>
+            <h1 className={s.name}>PassMan</h1>
+            <div className={s.status}>{status && <><LockIcon size={14} /><span>{status}</span></>}</div>
+          </div>
+          <div className={s.fields}>
+            <PasswordField
+              label="Master password"
+              value={password}
+              onChange={(v) => {
+                setPassword(v);
+                if (error) setError(null);
+              }}
+              autoComplete="current-password"
+              inputRef={field}
+              disabled={busy}
+              error={error !== null}
+            />
+            {error ? <FieldMessage kind="error">{error}</FieldMessage> : <FieldMessage />}
+          </div>
         </div>
-        <div className={s.fields}>
-          <PasswordField
-            label="Master password"
-            value={password}
-            onChange={(v) => {
-              setPassword(v);
-              if (error) setError(null);
-            }}
-            autoComplete="current-password"
-            inputRef={field}
-            disabled={busy}
-            error={error !== null}
-          />
-          {error ? <FieldMessage kind="error">{error}</FieldMessage> : <FieldMessage />}
-        </div>
-        <div className={s.button}>
+        {/* pinned to the bottom, so on the phone it rides up with the keyboard (like Save on the form screens) */}
+        <div className={s.dock}>
           <button type="submit" className={formStyles.primary} disabled={!password && !busy} aria-busy={busy}>
             {busy ? <><span className={formStyles.spinner} aria-hidden="true" />Unlocking…</> : 'Unlock'}
           </button>
+          <button type="button" className={formStyles.textLink} onClick={() => navigate('/recover')}>Forgot it? Use your recovery key</button>
+          <div className={s.enterHint}>Press Enter to unlock</div>
         </div>
-        <button type="button" className={formStyles.textLink} onClick={() => navigate('/recover')}>Forgot it? Use your recovery key</button>
-        <div className={s.enterHint}>Press Enter to unlock</div>
       </form>
     </div>
   );

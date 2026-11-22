@@ -34,6 +34,7 @@ import {
   type LoginInput,
 } from '../domain/logins';
 import { applyRestore } from '../domain/restore';
+import { forgetListView } from '../features/logins/listMemory';
 import { applyImport, type Decision, type ImportPlan, type ImportResult } from '../domain/importPlan';
 import { fileVersion, integrateRemote } from '../sync/syncEngine';
 
@@ -158,6 +159,7 @@ export function VaultProvider({ children }: { children: ReactNode }) {
     if (!session.current) return;
     session.current = null;
     setVersion(null);
+    forgetListView();
     entriesRef.current = [];
     setEntries([]);
     clearCopiedSecret();
